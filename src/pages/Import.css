@@ -1,16 +1,234 @@
-.import-mode-toggle {
+/* ─── Input Screen ──────────────────────────────────────────────────────── */
+.import-how-it-works {
     display: flex;
-    gap: var(--space-sm);
+    gap: var(--space-lg);
     margin-bottom: var(--space-xl);
 }
 
+.import-step {
+    flex: 1;
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-md);
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    padding: var(--space-lg);
+    backdrop-filter: blur(12px);
+}
+
+.import-step-num {
+    width: 28px;
+    height: 28px;
+    min-width: 28px;
+    border-radius: var(--radius-full);
+    background: var(--accent-gradient);
+    color: white;
+    font-weight: 800;
+    font-size: var(--font-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.import-step strong {
+    display: block;
+    font-size: var(--font-sm);
+    margin-bottom: 2px;
+}
+
+.import-step p {
+    color: var(--text-secondary);
+    font-size: var(--font-xs);
+    line-height: 1.5;
+    margin: 0;
+}
+
+/* Format examples */
+.import-format-examples {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-lg);
+    margin-bottom: var(--space-xl);
+}
+
+.import-example-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    padding: var(--space-lg);
+    backdrop-filter: blur(12px);
+}
+
+.import-example-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    font-size: var(--font-sm);
+    color: var(--text-secondary);
+    margin-bottom: var(--space-sm);
+}
+
+.import-example-text {
+    font-family: 'Fira Mono', 'Consolas', monospace;
+    font-size: 11px;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    background: var(--bg-glass);
+    padding: var(--space-md);
+    border-radius: var(--radius-md);
+    margin: 0;
+    white-space: pre;
+    overflow-x: auto;
+}
+
 .import-input-card {
-    max-width: 600px;
     display: flex;
     flex-direction: column;
     gap: var(--space-xl);
+    margin-bottom: var(--space-lg);
 }
 
+.import-tips {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-sm);
+    font-size: var(--font-xs);
+    color: var(--text-tertiary);
+    padding: var(--space-md) var(--space-lg);
+    background: var(--bg-glass);
+    border-radius: var(--radius-md);
+    line-height: 1.5;
+}
+
+/* ─── Review Screen ──────────────────────────────────────────────────────── */
+.import-meta-card {
+    margin-bottom: var(--space-lg);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+}
+
+.import-meta-row {
+    display: flex;
+    gap: var(--space-lg);
+    align-items: flex-end;
+}
+
+/* Format toggle */
+.import-format-row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-lg);
+}
+
+.import-format-label {
+    font-size: var(--font-sm);
+    font-weight: 600;
+    color: var(--text-secondary);
+    white-space: nowrap;
+}
+
+.import-format-toggle {
+    display: flex;
+    background: var(--bg-glass);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: 3px;
+    gap: 3px;
+}
+
+.import-fmt-btn {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    padding: var(--space-sm) var(--space-md);
+    border-radius: calc(var(--radius-md) - 2px);
+    border: none;
+    font-size: var(--font-xs);
+    font-weight: 600;
+    cursor: pointer;
+    background: transparent;
+    color: var(--text-secondary);
+    transition: all var(--transition-fast);
+}
+
+.import-fmt-btn.active {
+    background: var(--accent-gradient);
+    color: white;
+    box-shadow: var(--shadow-sm);
+}
+
+.import-fmt-btn:not(.active):hover {
+    color: var(--text-primary);
+    background: var(--bg-glass-hover);
+}
+
+/* Circuit params */
+.import-circuit-params {
+    display: flex;
+    gap: var(--space-lg);
+}
+
+.import-meta-badges {
+    display: flex;
+    gap: var(--space-sm);
+    flex-wrap: wrap;
+}
+
+/* ─── Circuit Preview Banner ─────────────────────────────────────────────── */
+.circuit-preview-banner {
+    background: linear-gradient(135deg, rgba(0, 162, 255, 0.08), rgba(0, 102, 255, 0.04));
+    border: 1px solid rgba(0, 162, 255, 0.2);
+    border-radius: var(--radius-lg);
+    padding: var(--space-lg) var(--space-xl);
+    margin-bottom: var(--space-lg);
+}
+
+.circuit-banner-inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+}
+
+.circuit-round-label {
+    font-size: var(--font-xs);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--accent-primary);
+}
+
+.circuit-flow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+    align-items: center;
+}
+
+.circuit-flow-item {
+    font-size: var(--font-sm);
+    color: var(--text-primary);
+    background: var(--bg-glass);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-sm);
+    padding: 3px 10px;
+}
+
+.circuit-flow-item strong {
+    color: var(--accent-primary);
+}
+
+.circuit-rest-label {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    font-size: var(--font-xs);
+    color: var(--text-secondary);
+    margin-top: var(--space-xs);
+}
+
+/* ─── Exercise Cards ─────────────────────────────────────────────────────── */
 .parsed-exercises {
     display: flex;
     flex-direction: column;
@@ -23,14 +241,13 @@
 }
 
 .parsed-exercise-card.deselected {
-    opacity: 0.4;
+    opacity: 0.35;
 }
 
 .parsed-exercise-header {
     display: flex;
     align-items: center;
-    gap: var(--space-md);
-    margin-bottom: var(--space-md);
+    gap: var(--space-sm);
 }
 
 .parsed-checkbox {
@@ -40,24 +257,43 @@
 }
 
 .parsed-checkbox input {
-    width: 20px;
-    height: 20px;
+    width: 18px;
+    height: 18px;
     accent-color: var(--accent-primary);
     cursor: pointer;
 }
 
-.parsed-exercise-details {
+.parsed-ex-quick-info {
     display: flex;
-    gap: var(--space-md);
+    gap: var(--space-xs);
     align-items: center;
+    flex-shrink: 0;
 }
 
+.parsed-exercise-details {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    margin-top: var(--space-md);
+    padding-top: var(--space-md);
+    border-top: 1px solid var(--border-subtle);
+}
+
+.parsed-detail-row {
+    display: flex;
+    gap: var(--space-md);
+    align-items: flex-end;
+}
+
+/* ─── Actions ────────────────────────────────────────────────────────────── */
 .import-actions {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-top: var(--space-lg);
 }
 
+/* ─── Success Screen ─────────────────────────────────────────────────────── */
 .import-success {
     display: flex;
     flex-direction: column;
@@ -87,8 +323,10 @@
 .import-success p {
     color: var(--text-secondary);
     margin-bottom: var(--space-xl);
+    max-width: 400px;
 }
 
+/* ─── Spinner ────────────────────────────────────────────────────────────── */
 .spin {
     animation: spin 1s linear infinite;
 }
@@ -100,5 +338,28 @@
 
     to {
         transform: rotate(360deg);
+    }
+}
+
+/* ─── Responsive ─────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+
+    .import-how-it-works,
+    .import-format-examples {
+        flex-direction: column;
+        grid-template-columns: 1fr;
+    }
+
+    .import-format-examples {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .parsed-detail-row,
+    .import-meta-row,
+    .import-circuit-params,
+    .import-format-row {
+        flex-direction: column;
+        align-items: flex-start;
     }
 }

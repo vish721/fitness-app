@@ -23,7 +23,7 @@ const navItems = [
     { to: '/workout', icon: Play, label: 'Workout' },
     { to: '/history', icon: History, label: 'History' },
     { to: '/progress', icon: TrendingUp, label: 'Progress' },
-    { to: '/import', icon: Link, label: 'Import' },
+    { to: '/import', icon: Link, label: 'Import Workout' },
 ];
 
 export default function Sidebar() {
