@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { ThemeProvider } from './contexts/ThemeContext';
 import Sidebar from './components/layout/Sidebar';
 import Auth from './pages/Auth';
 import Dashboard from './pages/Dashboard';
@@ -12,6 +13,8 @@ import Progress from './pages/Progress';
 import Import from './pages/Import';
 import Social from './pages/Social';
 import './index.css';
+
+// ... AppLayout unchanged ...
 
 function AppLayout() {
   const { user, loading } = useAuth();
@@ -64,21 +67,24 @@ function AppLayout() {
 function App() {
   return (
     <BrowserRouter>
-      <AuthProvider>
-        <AppLayout />
-        <Toaster
-          position="top-right"
-          toastOptions={{
-            style: {
-              background: '#0a0a0a',
-              color: '#f1f1f7',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
-              borderRadius: '10px',
-              fontSize: '14px',
-            },
-          }}
-        />
-      </AuthProvider>
+      <ThemeProvider>
+        <AuthProvider>
+          <AppLayout />
+          <Toaster
+            position="top-right"
+            toastOptions={{
+              className: 'toast-container',
+              style: {
+                background: 'var(--bg-card)',
+                color: 'var(--text-primary)',
+                border: '1px solid var(--border-subtle)',
+                borderRadius: '10px',
+                fontSize: '14px',
+              },
+            }}
+          />
+        </AuthProvider>
+      </ThemeProvider>
     </BrowserRouter>
   );
 }

@@ -14,8 +14,11 @@ import {
     ChevronRight,
     Menu,
     X,
+    Sun,
+    Moon,
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
+import { useTheme } from '../../contexts/ThemeContext';
 import { useState, useEffect } from 'react';
 import './Sidebar.css';
 
@@ -30,7 +33,7 @@ const navItems = [
     { to: '/social', icon: Users, label: 'Social' },
 ];
 
-// Bottom nav shows these 5 items (most used), rest in "more" menu
+// Bottom nav shows these items (most used)
 const bottomNavItems = [
     { to: '/', icon: LayoutDashboard, label: 'Home' },
     { to: '/workout', icon: Play, label: 'Workout' },
@@ -42,6 +45,7 @@ const bottomNavItems = [
 
 export default function Sidebar() {
     const { user, signOut } = useAuth();
+    const { theme, toggleTheme } = useTheme();
     const [collapsed, setCollapsed] = useState(false);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
@@ -70,13 +74,22 @@ export default function Sidebar() {
                         </div>
                         <span className="logo-text logo-text-sm">Chud2Chad</span>
                     </div>
-                    <button
-                        className="btn btn-ghost btn-icon mobile-menu-btn"
-                        onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                        aria-label="Menu"
-                    >
-                        {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
-                    </button>
+                    <div className="flex items-center gap-sm">
+                        <button
+                            className="btn btn-ghost btn-icon theme-toggle-btn"
+                            onClick={toggleTheme}
+                            aria-label="Toggle theme"
+                        >
+                            {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+                        </button>
+                        <button
+                            className="btn btn-ghost btn-icon mobile-menu-btn"
+                            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                            aria-label="Menu"
+                        >
+                            {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
+                        </button>
+                    </div>
                 </header>
 
                 {/* Mobile Drawer Overlay */}
@@ -185,6 +198,16 @@ export default function Sidebar() {
             </nav>
 
             <div className="sidebar-footer">
+                {/* Theme Toggle */}
+                <button
+                    className="btn btn-ghost nav-item theme-toggle-btn"
+                    onClick={toggleTheme}
+                    title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+                >
+                    {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
+                    {!collapsed && <span>{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>}
+                </button>
+
                 {!collapsed && user && (
                     <div className="user-info">
                         <div className="user-avatar">

@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../lib/supabase';
-import type { Exercise, Workout, WorkoutSet, WorkoutTemplate, PersonalRecord } from '../lib/supabase';
+import type { Exercise, Workout, WorkoutSet, WorkoutTemplate, PersonalRecord, BodyMeasurement } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 
 // ============ EXERCISES ============
@@ -357,4 +357,131 @@ export function useAllWorkoutSets() {
     useEffect(() => { fetchAllSets(); }, [fetchAllSets]);
 
     return { sets, loading, fetchAllSets };
+}
+
+// ============ BODY MEASUREMENTS ============
+export function useBodyMeasurements() {
+    const { user } = useAuth();
+    const [measurements, setMeasurements] = useState<BodyMeasurement[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    const fetchMeasurements = useCallback(async () => {
+        if (!user) return;
+        setLoading(true);
+        const { data, error } = await supabase
+            .from('body_measurements')
+            .select('*')
+            .eq('user_id', user.id)
+            .order('date', { ascending: true });
+
+        if (!error && data) setMeasurements(data as BodyMeasurement[]);
+        setLoading(false);
+    }, [user]);
+
+    useEffect(() => { fetchMeasurements(); }, [fetchMeasurements]);
+
+    const addMeasurement = async (measurement: { weight: number; body_fat_pct?: number | null; date?: string; notes?: string | null }) => {
+        if (!user) return null;
+        const { data, error } = await supabase
+            .from('body_measurements')
+            .insert({
+                user_id: user.id,
+                weight: measurement.weight,
+                body_fat_pct: measurement.body_fat_pct || null,
+                date: measurement.date || new Date().toISOString().split('T')[0],
+                notes: measurement.notes || null,
+            })
+            .select()
+            .single();
+
+        if (!error && data) {
+            setMeasurements(prev => [...prev, data as BodyMeasurement].sort((a, b) => a.date.localeCompare(b.date)));
+            return data as BodyMeasurement;
+        }
+        return null;
+    };
+
+    const deleteMeasurement = async (id: string) => {
+        const { error } = await supabase.from('body_measurements').delete().eq('id', id);
+        if (!error) {
+            setMeasurements(prev => prev.filter(m => m.id !== id));
+        }
+        return !error;
+    };
+
+    return { measurements, loading, fetchMeasurements, addMeasurement, deleteMeasurement };
+}
+
+// ============ PREVIOUS PERFORMANCE ============
+export function usePreviousPerformance(exerciseIds: string[]) {
+    const { user } = useAuth();
+    const [previousSets, setPreviousSets] = useState<Record<string, { weight: number; reps: number }[]>>({});
+
+    const fetchPrevious = useCallback(async () => {
+        if (!user || exerciseIds.length === 0) return;
+
+        // Get the user's last completed workout that contained each exercise
+        const result: Record<string, { weight: number; reps: number }[]> = {};
+
+        for (const exerciseId of exerciseIds) {
+            // Find the most recent completed workout with this exercise
+            const { data: recentSets } = await supabase
+                .from('workout_sets')
+                .select('weight, reps, workout_id, created_at')
+                .eq('exercise_id', exerciseId)
+                .order('created_at', { ascending: false })
+                .limit(20);
+
+            if (recentSets && recentSets.length > 0) {
+                // Group by workout_id and get the most recent workout's sets
+                const lastWorkoutId = recentSets[0].workout_id;
+                const lastWorkoutSets = recentSets
+                    .filter(s => s.workout_id === lastWorkoutId)
+                    .reverse() // chronological order
+                    .map(s => ({ weight: s.weight, reps: s.reps }));
+                result[exerciseId] = lastWorkoutSets;
+            }
+        }
+
+        setPreviousSets(result);
+    }, [user, exerciseIds.join(',')]);
+
+    useEffect(() => { fetchPrevious(); }, [fetchPrevious]);
+
+    return previousSets;
+}
+
+// ============ ONBOARDING STATUS ============
+export function useOnboardingStatus() {
+    const { user } = useAuth();
+    const [needsOnboarding, setNeedsOnboarding] = useState(false);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const check = async () => {
+            if (!user) {
+                setLoading(false);
+                return;
+            }
+
+            // Check if user has any exercises
+            const { count, error } = await supabase
+                .from('exercises')
+                .select('id', { count: 'exact', head: true })
+                .eq('user_id', user.id);
+
+            if (!error) {
+                setNeedsOnboarding(count === 0);
+            }
+            setLoading(false);
+        };
+
+        check();
+    }, [user]);
+
+    const completeOnboarding = () => {
+        setNeedsOnboarding(false);
+    };
+
+    return { needsOnboarding, loading, completeOnboarding };
 }

@@ -1,11 +1,12 @@
 import { useState, useMemo } from 'react';
-import { TrendingUp, Trophy, BarChart3 } from 'lucide-react';
-import { useExercises, usePersonalRecords, useAllWorkoutSets, useWorkouts } from '../lib/hooks';
+import { TrendingUp, Trophy, BarChart3, Scale, Plus, Trash2 } from 'lucide-react';
+import { useExercises, usePersonalRecords, useAllWorkoutSets, useWorkouts, useBodyMeasurements } from '../lib/hooks';
 import { formatDate, calculateOneRepMax, MUSCLE_GROUP_BADGE_CLASS } from '../lib/utils';
 import {
     ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip,
     CartesianGrid, AreaChart, Area, PieChart, Pie, Cell
 } from 'recharts';
+import toast from 'react-hot-toast';
 import './Progress.css';
 
 const CHART_COLORS = ['#6366f1', '#a855f7', '#22c55e', '#f59e0b', '#ef4444', '#3b82f6', '#ec4899', '#06b6d4'];
@@ -15,7 +16,14 @@ export default function Progress() {
     const { records } = usePersonalRecords();
     const { sets } = useAllWorkoutSets();
     const { workouts } = useWorkouts();
+    const { measurements, addMeasurement, deleteMeasurement } = useBodyMeasurements();
     const [selectedExercise, setSelectedExercise] = useState<string>('');
+
+    // Body weight tracking form
+    const [showWeightForm, setShowWeightForm] = useState(false);
+    const [weightInput, setWeightInput] = useState('');
+    const [bodyFatInput, setBodyFatInput] = useState('');
+    const [weightDateInput, setWeightDateInput] = useState(new Date().toISOString().split('T')[0]);
 
     // Exercise progression data
     const progressionData = useMemo(() => {
@@ -81,11 +89,181 @@ export default function Progress() {
             }));
     }, [sets, workouts]);
 
+    // Body weight chart data
+    const weightChartData = useMemo(() => {
+        return measurements.map(m => ({
+            date: formatDate(m.date),
+            weight: m.weight,
+            bodyFat: m.body_fat_pct,
+        }));
+    }, [measurements]);
+
+    const handleAddWeight = async () => {
+        const weight = parseFloat(weightInput);
+        if (!weight || weight <= 0) {
+            toast.error('Enter a valid weight');
+            return;
+        }
+        const bodyFat = bodyFatInput ? parseFloat(bodyFatInput) : null;
+        await addMeasurement({
+            weight,
+            body_fat_pct: bodyFat,
+            date: weightDateInput,
+        });
+        toast.success('Weight logged!');
+        setWeightInput('');
+        setBodyFatInput('');
+        setShowWeightForm(false);
+    };
+
+    const handleDeleteWeight = async (id: string) => {
+        if (confirm('Delete this measurement?')) {
+            await deleteMeasurement(id);
+            toast.success('Measurement deleted');
+        }
+    };
+
     return (
         <div className="page-container">
             <div className="page-header">
                 <h1>Progress</h1>
                 <p>Track your strength gains and progression over time</p>
+            </div>
+
+            {/* Body Weight Tracking */}
+            <div className="progress-section">
+                <div className="flex items-center justify-between">
+                    <h2 className="flex items-center gap-md">
+                        <Scale size={20} style={{ color: 'var(--info)' }} />
+                        Body Weight
+                    </h2>
+                    <button
+                        className="btn btn-primary btn-sm"
+                        onClick={() => setShowWeightForm(!showWeightForm)}
+                    >
+                        <Plus size={14} />
+                        Log Weight
+                    </button>
+                </div>
+
+                {showWeightForm && (
+                    <div className="card weight-form animate-slide-up" style={{ marginTop: 'var(--space-md)' }}>
+                        <div className="grid grid-3" style={{ gap: 'var(--space-md)' }}>
+                            <div className="input-group">
+                                <label>Weight (kg)</label>
+                                <input
+                                    className="input"
+                                    type="number"
+                                    step="0.1"
+                                    placeholder="80.5"
+                                    value={weightInput}
+                                    onChange={e => setWeightInput(e.target.value)}
+                                    autoFocus
+                                />
+                            </div>
+                            <div className="input-group">
+                                <label>Body Fat % (optional)</label>
+                                <input
+                                    className="input"
+                                    type="number"
+                                    step="0.1"
+                                    placeholder="15"
+                                    value={bodyFatInput}
+                                    onChange={e => setBodyFatInput(e.target.value)}
+                                />
+                            </div>
+                            <div className="input-group">
+                                <label>Date</label>
+                                <input
+                                    className="input"
+                                    type="date"
+                                    value={weightDateInput}
+                                    onChange={e => setWeightDateInput(e.target.value)}
+                                />
+                            </div>
+                        </div>
+                        <div className="flex gap-md" style={{ marginTop: 'var(--space-md)' }}>
+                            <button className="btn btn-primary" onClick={handleAddWeight}>Save</button>
+                            <button className="btn btn-ghost" onClick={() => setShowWeightForm(false)}>Cancel</button>
+                        </div>
+                    </div>
+                )}
+
+                {weightChartData.length > 1 ? (
+                    <div className="grid grid-2" style={{ marginTop: 'var(--space-lg)' }}>
+                        <div className="card chart-card">
+                            <h4>Weight Trend (kg)</h4>
+                            <ResponsiveContainer width="100%" height={250}>
+                                <LineChart data={weightChartData}>
+                                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
+                                    <XAxis dataKey="date" tick={{ fontSize: 11, fill: '#8b8b9e' }} />
+                                    <YAxis tick={{ fontSize: 11, fill: '#8b8b9e' }} domain={['dataMin - 2', 'dataMax + 2']} />
+                                    <Tooltip
+                                        contentStyle={{ background: '#1a1a2e', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '10px' }}
+                                        labelStyle={{ color: '#f1f1f7' }}
+                                    />
+                                    <Line type="monotone" dataKey="weight" stroke="#3b82f6" strokeWidth={2} dot={{ fill: '#3b82f6' }} />
+                                </LineChart>
+                            </ResponsiveContainer>
+                        </div>
+                        {weightChartData.some(d => d.bodyFat) && (
+                            <div className="card chart-card">
+                                <h4>Body Fat % Trend</h4>
+                                <ResponsiveContainer width="100%" height={250}>
+                                    <LineChart data={weightChartData.filter(d => d.bodyFat)}>
+                                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
+                                        <XAxis dataKey="date" tick={{ fontSize: 11, fill: '#8b8b9e' }} />
+                                        <YAxis tick={{ fontSize: 11, fill: '#8b8b9e' }} />
+                                        <Tooltip
+                                            contentStyle={{ background: '#1a1a2e', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '10px' }}
+                                            labelStyle={{ color: '#f1f1f7' }}
+                                        />
+                                        <Line type="monotone" dataKey="bodyFat" stroke="#f59e0b" strokeWidth={2} dot={{ fill: '#f59e0b' }} />
+                                    </LineChart>
+                                </ResponsiveContainer>
+                            </div>
+                        )}
+                    </div>
+                ) : weightChartData.length === 1 ? (
+                    <div className="card" style={{ marginTop: 'var(--space-lg)' }}>
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <span className="text-sm text-secondary">Latest: </span>
+                                <strong>{measurements[measurements.length - 1].weight} kg</strong>
+                                {measurements[measurements.length - 1].body_fat_pct && (
+                                    <span className="text-sm text-secondary"> · {measurements[measurements.length - 1].body_fat_pct}% BF</span>
+                                )}
+                            </div>
+                            <span className="text-sm text-secondary">Log more entries to see trends</span>
+                        </div>
+                    </div>
+                ) : (
+                    <p className="text-secondary text-sm" style={{ marginTop: 'var(--space-md)' }}>
+                        Start logging your body weight to track trends over time
+                    </p>
+                )}
+
+                {/* Recent measurements table */}
+                {measurements.length > 0 && (
+                    <div className="weight-history" style={{ marginTop: 'var(--space-lg)' }}>
+                        <h4 className="text-sm text-secondary" style={{ marginBottom: 'var(--space-sm)' }}>Recent Entries</h4>
+                        <div className="weight-entries">
+                            {[...measurements].reverse().slice(0, 10).map(m => (
+                                <div key={m.id} className="weight-entry">
+                                    <span className="text-sm">{formatDate(m.date)}</span>
+                                    <strong>{m.weight} kg</strong>
+                                    {m.body_fat_pct && <span className="badge badge-primary">{m.body_fat_pct}% BF</span>}
+                                    <button
+                                        className="btn btn-ghost btn-icon btn-sm"
+                                        onClick={() => handleDeleteWeight(m.id)}
+                                    >
+                                        <Trash2 size={14} />
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
             </div>
 
             {/* PRs Section */}

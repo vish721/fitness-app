@@ -20,9 +20,14 @@ export default function Auth() {
             if (isSignUp) {
                 const { error } = await signUp(email, password, displayName);
                 if (error) {
-                    toast.error(error.message);
+                    if (error.message.toLowerCase().includes('email limit exceeded')) {
+                        toast.error('The signup limit for the default email service has been reached. Please try again in an hour or check the console for instructions on how to fix this.', { duration: 6000 });
+                        console.warn('Fix for "Email limit exceeded": You are hitting the Supabase default SMTP limits. To fix this, disable "Confirm email" in Authentication -> Settings -> Email Auth in your Supabase dashboard, or set up a custom SMTP provider like Resend.');
+                    } else {
+                        toast.error(error.message);
+                    }
                 } else {
-                    toast.success('Account created! Check your email for confirmation.');
+                    toast.success('Account created! Sign in to continue.');
                 }
             } else {
                 const { error } = await signIn(email, password);

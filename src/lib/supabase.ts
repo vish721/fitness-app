@@ -199,6 +199,75 @@ export type Database = {
         };
         Update: Record<string, never>;
       };
+      body_measurements: {
+        Row: {
+          id: string;
+          user_id: string;
+          weight: number;
+          body_fat_pct: number | null;
+          date: string;
+          notes: string | null;
+          created_at: string;
+        };
+        Insert: {
+          user_id: string;
+          weight: number;
+          body_fat_pct?: number | null;
+          date?: string;
+          notes?: string | null;
+        };
+        Update: {
+          weight?: number;
+          body_fat_pct?: number | null;
+          date?: string;
+          notes?: string | null;
+        };
+      };
+      challenges: {
+        Row: {
+          id: string;
+          creator_id: string;
+          title: string;
+          description: string | null;
+          challenge_type: 'streak' | 'workout_count' | 'volume';
+          target_value: number;
+          start_date: string;
+          end_date: string;
+          created_at: string;
+        };
+        Insert: {
+          creator_id: string;
+          title: string;
+          description?: string | null;
+          challenge_type: 'streak' | 'workout_count' | 'volume';
+          target_value: number;
+          start_date: string;
+          end_date: string;
+        };
+        Update: {
+          title?: string;
+          description?: string | null;
+          target_value?: number;
+          end_date?: string;
+        };
+      };
+      challenge_participants: {
+        Row: {
+          id: string;
+          challenge_id: string;
+          user_id: string;
+          progress: number;
+          joined_at: string;
+        };
+        Insert: {
+          challenge_id: string;
+          user_id: string;
+          progress?: number;
+        };
+        Update: {
+          progress?: number;
+        };
+      };
     };
   };
 };
@@ -220,3 +289,6 @@ export type PersonalRecord = Database['public']['Tables']['personal_records']['R
 export type Profile = Database['public']['Tables']['profiles']['Row'];
 export type Friendship = Database['public']['Tables']['friendships']['Row'];
 export type WorkoutReaction = Database['public']['Tables']['workout_reactions']['Row'];
+export type BodyMeasurement = Database['public']['Tables']['body_measurements']['Row'];
+export type Challenge = Database['public']['Tables']['challenges']['Row'];
+export type ChallengeParticipant = Database['public']['Tables']['challenge_participants']['Row'];

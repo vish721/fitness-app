@@ -1,12 +1,11 @@
 import { useNavigate } from 'react-router-dom';
 import {
     Flame, Dumbbell, Trophy, Play,
-    ChevronRight, Calendar, Zap, Target
+    ChevronRight, Calendar, Zap, Target, RotateCcw
 } from 'lucide-react';
-import { useWorkouts } from '../lib/hooks';
-import { useExercises } from '../lib/hooks';
-import { usePersonalRecords } from '../lib/hooks';
+import { useWorkouts, useExercises, usePersonalRecords, useTemplates, useOnboardingStatus } from '../lib/hooks';
 import { formatDuration, formatRelative, calculateStreak, getRollingCalendarData, cn } from '../lib/utils';
+import Onboarding from '../components/Onboarding';
 import './Dashboard.css';
 
 export default function Dashboard() {
@@ -14,6 +13,9 @@ export default function Dashboard() {
     const { workouts } = useWorkouts();
     const { exercises } = useExercises();
     const { records } = usePersonalRecords();
+    const { templates } = useTemplates();
+    const { needsOnboarding, loading: onboardingLoading, completeOnboarding } = useOnboardingStatus();
+
     const completedWorkouts = workouts.filter(w => w.completed_at);
     const workoutDates = completedWorkouts.map(w => new Date(w.started_at));
     const streak = calculateStreak(workoutDates);
@@ -28,8 +30,18 @@ export default function Dashboard() {
         w => new Date(w.started_at) >= weekStart
     );
 
-    // Total volume this week (would need sets data, showing count for now)
     const recentPRs = records.slice(0, 5);
+
+    // Quick-start: most recent templates (top 3)
+    const quickStartTemplates = templates.slice(0, 3);
+
+    // Last completed workout for "Repeat Last"
+    const lastWorkout = completedWorkouts[0];
+
+    // Show onboarding for new users
+    if (!onboardingLoading && needsOnboarding) {
+        return <Onboarding onComplete={completeOnboarding} />;
+    }
 
     return (
         <div className="page-container">
@@ -41,13 +53,33 @@ export default function Dashboard() {
                             ? `You're on a ${streak.current}-day streak. Keep it going!`
                             : "Start a workout to begin your streak!"}
                     </p>
-                    <button
-                        className="btn btn-primary btn-lg"
-                        onClick={() => navigate('/workout')}
-                    >
-                        <Play size={20} />
-                        Start Workout
-                    </button>
+                    <div className="hero-buttons">
+                        <button
+                            className="btn btn-primary btn-lg"
+                            onClick={() => navigate('/workout')}
+                        >
+                            <Play size={20} />
+                            Start Workout
+                        </button>
+                        {lastWorkout && (
+                            <button
+                                className="btn btn-secondary btn-lg"
+                                onClick={() => {
+                                    // Find the template that matches this workout
+                                    const matchingTemplate = templates.find(t => t.id === lastWorkout.template_id);
+                                    if (matchingTemplate) {
+                                        navigate('/workout', { state: { template: matchingTemplate } });
+                                    } else {
+                                        navigate('/workout');
+                                    }
+                                }}
+                                title={`Repeat: ${lastWorkout.name}`}
+                            >
+                                <RotateCcw size={18} />
+                                Repeat Last
+                            </button>
+                        )}
+                    </div>
                 </div>
                 <div className="hero-streak">
                     <div className="streak-number">
@@ -57,6 +89,33 @@ export default function Dashboard() {
                     <span className="streak-label">Day Streak</span>
                 </div>
             </div>
+
+            {/* Quick Start Templates */}
+            {quickStartTemplates.length > 0 && (
+                <div className="quick-start-section animate-in">
+                    <h3 className="section-title">Quick Start</h3>
+                    <div className="quick-start-grid">
+                        {quickStartTemplates.map(template => (
+                            <button
+                                key={template.id}
+                                className="quick-start-card"
+                                onClick={() => navigate('/workout', { state: { template } })}
+                            >
+                                <div className="quick-start-icon">
+                                    <Play size={16} />
+                                </div>
+                                <div className="quick-start-info">
+                                    <span className="quick-start-name">{template.name}</span>
+                                    <span className="quick-start-meta">
+                                        {template.exercises.length} exercises
+                                    </span>
+                                </div>
+                                <ChevronRight size={16} className="quick-start-arrow" />
+                            </button>
+                        ))}
+                    </div>
+                </div>
+            )}
 
             <div className="grid grid-4 dashboard-stats">
                 <div className="stat-card animate-in">

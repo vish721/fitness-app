@@ -396,3 +396,167 @@ export function useLeaderboard() {
 
     return { entries, loading, fetchLeaderboard };
 }
+
+// ============ CHALLENGES ============
+
+export type ChallengeWithParticipants = {
+    id: string;
+    creator_id: string;
+    title: string;
+    description: string | null;
+    challenge_type: 'streak' | 'workout_count' | 'volume';
+    target_value: number;
+    start_date: string;
+    end_date: string;
+    created_at: string;
+    participants: {
+        user_id: string;
+        display_name: string | null;
+        progress: number;
+    }[];
+    isCreator: boolean;
+    isParticipant: boolean;
+    userProgress: number;
+};
+
+export function useChallenges() {
+    const { user } = useAuth();
+    const [challenges, setChallenges] = useState<ChallengeWithParticipants[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    const fetchChallenges = useCallback(async () => {
+        if (!user) return;
+        setLoading(true);
+
+        // Get friend IDs
+        const { data: friendships } = await supabase
+            .from('friendships')
+            .select('*')
+            .eq('status', 'accepted')
+            .or(`requester_id.eq.${user.id},addressee_id.eq.${user.id}`);
+
+        const friendIds = (friendships || []).map(f =>
+            f.requester_id === user.id ? f.addressee_id : f.requester_id
+        );
+        const allUserIds = [user.id, ...friendIds];
+
+        // Get challenges where creator is self or friend
+        const { data: challengeData } = await supabase
+            .from('challenges')
+            .select('*')
+            .in('creator_id', allUserIds)
+            .order('created_at', { ascending: false });
+
+        if (!challengeData || challengeData.length === 0) {
+            setChallenges([]);
+            setLoading(false);
+            return;
+        }
+
+        // Get participants for these challenges
+        const challengeIds = challengeData.map(c => c.id);
+        const { data: participants } = await supabase
+            .from('challenge_participants')
+            .select('*')
+            .in('challenge_id', challengeIds);
+
+        // Get profiles for all participant user IDs
+        const participantUserIds = [...new Set((participants || []).map(p => p.user_id))];
+        const { data: profiles } = await supabase
+            .from('profiles')
+            .select('*')
+            .in('id', participantUserIds.length > 0 ? participantUserIds : ['__none__']);
+
+        const enriched: ChallengeWithParticipants[] = challengeData.map(c => {
+            const challengeParticipants = (participants || []).filter(p => p.challenge_id === c.id);
+            const userParticipant = challengeParticipants.find(p => p.user_id === user.id);
+
+            return {
+                ...c,
+                participants: challengeParticipants.map(p => ({
+                    user_id: p.user_id,
+                    display_name: profiles?.find(pr => pr.id === p.user_id)?.display_name || 'Unknown',
+                    progress: p.progress,
+                })),
+                isCreator: c.creator_id === user.id,
+                isParticipant: !!userParticipant,
+                userProgress: userParticipant?.progress || 0,
+            };
+        });
+
+        setChallenges(enriched);
+        setLoading(false);
+    }, [user]);
+
+    useEffect(() => { fetchChallenges(); }, [fetchChallenges]);
+
+    const createChallenge = async (challenge: {
+        title: string;
+        description?: string;
+        challenge_type: 'streak' | 'workout_count' | 'volume';
+        target_value: number;
+        start_date: string;
+        end_date: string;
+    }) => {
+        if (!user) return false;
+
+        const { data, error } = await supabase
+            .from('challenges')
+            .insert({
+                creator_id: user.id,
+                title: challenge.title,
+                description: challenge.description || null,
+                challenge_type: challenge.challenge_type,
+                target_value: challenge.target_value,
+                start_date: challenge.start_date,
+                end_date: challenge.end_date,
+            })
+            .select()
+            .single();
+
+        if (error || !data) return false;
+
+        // Auto-join creator
+        await supabase.from('challenge_participants').insert({
+            challenge_id: data.id,
+            user_id: user.id,
+            progress: 0,
+        });
+
+        await fetchChallenges();
+        return true;
+    };
+
+    const joinChallenge = async (challengeId: string) => {
+        if (!user) return false;
+        const { error } = await supabase
+            .from('challenge_participants')
+            .insert({ challenge_id: challengeId, user_id: user.id, progress: 0 });
+
+        if (!error) await fetchChallenges();
+        return !error;
+    };
+
+    const leaveChallenge = async (challengeId: string) => {
+        if (!user) return false;
+        const { error } = await supabase
+            .from('challenge_participants')
+            .delete()
+            .eq('challenge_id', challengeId)
+            .eq('user_id', user.id);
+
+        if (!error) await fetchChallenges();
+        return !error;
+    };
+
+    const deleteChallenge = async (challengeId: string) => {
+        if (!user) return false;
+        // Delete participants first
+        await supabase.from('challenge_participants').delete().eq('challenge_id', challengeId);
+        const { error } = await supabase.from('challenges').delete().eq('id', challengeId);
+        if (!error) await fetchChallenges();
+        return !error;
+    };
+
+    return { challenges, loading, fetchChallenges, createChallenge, joinChallenge, leaveChallenge, deleteChallenge };
+}
