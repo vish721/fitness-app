@@ -75,21 +75,12 @@ create policy "Users can remove reactions"
   using (auth.uid() = user_id);
 
 -- ============================================
--- Allow friends to read each other's profiles
+-- Allow all authenticated users to read profiles
+-- (needed for friend requests, feed, leaderboard)
 -- ============================================
-create policy "Friends can view profiles"
+create policy "Authenticated users can view profiles"
   on public.profiles for select
-  using (
-    auth.uid() = id
-    or exists (
-      select 1 from public.friendships
-      where status = 'accepted'
-      and (
-        (requester_id = auth.uid() and addressee_id = id)
-        or (addressee_id = auth.uid() and requester_id = id)
-      )
-    )
-  );
+  using (auth.uid() is not null);
 
 -- ============================================
 -- Allow friends to read each other's completed workouts
