@@ -91,12 +91,18 @@ export function useFriends() {
         // Check if friendship already exists in either direction
         const { data: existing } = await supabase
             .from('friendships')
-            .select('id')
+            .select('id, status')
             .or(
                 `and(requester_id.eq.${user.id},addressee_id.eq.${addresseeId}),and(requester_id.eq.${addresseeId},addressee_id.eq.${user.id})`
             );
 
-        if (existing && existing.length > 0) return false;
+        if (existing && existing.length > 0) {
+            const row = existing[0];
+            // If pending or accepted, block the new request
+            if (row.status === 'pending' || row.status === 'accepted') return false;
+            // If declined or blocked, delete the old row so we can re-add
+            await supabase.from('friendships').delete().eq('id', row.id);
+        }
 
         const { error } = await supabase
             .from('friendships')
