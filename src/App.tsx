@@ -41,7 +41,7 @@ function AppLayout() {
   }
 
   return (
-    <div style={{ display: 'flex' }}>
+    <div className="app-layout">
       <Sidebar />
       <main className="app-content">
         <Routes>

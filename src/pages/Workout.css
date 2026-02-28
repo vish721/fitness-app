@@ -145,3 +145,69 @@
     font-weight: 600;
     color: var(--text-secondary);
 }
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+    .workout-header {
+        flex-direction: column;
+        gap: var(--space-md);
+        align-items: flex-start;
+    }
+
+    .workout-header h1 {
+        font-size: var(--font-lg);
+    }
+
+    .workout-header>div:last-child {
+        width: 100%;
+        display: flex;
+    }
+
+    .workout-header>div:last-child .btn {
+        flex: 1;
+    }
+
+    .sets-header {
+        grid-template-columns: 32px 1fr 1fr 52px 72px;
+        gap: 4px;
+        padding: var(--space-xs) 4px;
+        font-size: 10px;
+    }
+
+    .set-row {
+        grid-template-columns: 32px 1fr 1fr 52px 72px;
+        gap: 4px;
+        padding: var(--space-xs) 4px;
+    }
+
+    .set-row .input {
+        padding: var(--space-sm);
+        min-height: 38px;
+        font-size: var(--font-sm);
+        text-align: center;
+    }
+
+    .set-number {
+        width: 24px;
+        height: 24px;
+        font-size: 10px;
+    }
+
+    .exercise-block-header h3 {
+        font-size: var(--font-sm);
+    }
+
+    .exercise-block-number {
+        width: 24px;
+        height: 24px;
+        font-size: 10px;
+    }
+
+    .add-exercise-section {
+        max-width: 100%;
+    }
+
+    .workout-start-card {
+        max-width: 100%;
+    }
+}

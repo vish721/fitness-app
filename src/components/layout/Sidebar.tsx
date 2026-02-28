@@ -1,4 +1,4 @@
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import {
     LayoutDashboard,
     Dumbbell,
@@ -11,9 +11,11 @@ import {
     Flame,
     ChevronLeft,
     ChevronRight,
+    Menu,
+    X,
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import './Sidebar.css';
 
 const navItems = [
@@ -23,14 +25,129 @@ const navItems = [
     { to: '/workout', icon: Play, label: 'Workout' },
     { to: '/history', icon: History, label: 'History' },
     { to: '/progress', icon: TrendingUp, label: 'Progress' },
-    { to: '/import', icon: Link, label: 'Import Workout' },
+    { to: '/import', icon: Link, label: 'Import' },
+];
+
+// Bottom nav shows these 5 items (most used), rest in "more" menu
+const bottomNavItems = [
+    { to: '/', icon: LayoutDashboard, label: 'Home' },
+    { to: '/workout', icon: Play, label: 'Workout' },
+    { to: '/exercises', icon: Dumbbell, label: 'Exercises' },
+    { to: '/history', icon: History, label: 'History' },
+    { to: '/progress', icon: TrendingUp, label: 'Progress' },
 ];
 
 export default function Sidebar() {
     const { user, signOut } = useAuth();
     const [collapsed, setCollapsed] = useState(false);
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+    const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+    const location = useLocation();
 
+    useEffect(() => {
+        const handleResize = () => setIsMobile(window.innerWidth <= 768);
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
+    // Close mobile menu on route change
+    useEffect(() => {
+        setMobileMenuOpen(false);
+    }, [location.pathname]);
+
+    // Mobile layout: bottom nav + slide-out drawer for more items
+    if (isMobile) {
+        return (
+            <>
+                {/* Mobile Top Header */}
+                <header className="mobile-header">
+                    <div className="mobile-header-logo">
+                        <div className="logo-icon logo-icon-sm">
+                            <Flame size={18} />
+                        </div>
+                        <span className="logo-text logo-text-sm">Chud2Chad</span>
+                    </div>
+                    <button
+                        className="btn btn-ghost btn-icon mobile-menu-btn"
+                        onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                        aria-label="Menu"
+                    >
+                        {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
+                    </button>
+                </header>
+
+                {/* Mobile Drawer Overlay */}
+                {mobileMenuOpen && (
+                    <div className="mobile-drawer-overlay" onClick={() => setMobileMenuOpen(false)}>
+                        <div className="mobile-drawer" onClick={e => e.stopPropagation()}>
+                            <div className="mobile-drawer-header">
+                                <div className="sidebar-logo">
+                                    <div className="logo-icon">
+                                        <Flame size={24} />
+                                    </div>
+                                    <span className="logo-text">Chud2Chad</span>
+                                </div>
+                                <button className="btn btn-ghost btn-icon" onClick={() => setMobileMenuOpen(false)}>
+                                    <X size={20} />
+                                </button>
+                            </div>
+                            <nav className="mobile-drawer-nav">
+                                {navItems.map(item => (
+                                    <NavLink
+                                        key={item.to}
+                                        to={item.to}
+                                        className={({ isActive }) =>
+                                            `nav-item ${isActive ? 'active' : ''}`
+                                        }
+                                        end={item.to === '/'}
+                                    >
+                                        <item.icon size={20} />
+                                        <span>{item.label}</span>
+                                    </NavLink>
+                                ))}
+                            </nav>
+                            <div className="mobile-drawer-footer">
+                                {user && (
+                                    <div className="user-info">
+                                        <div className="user-avatar">
+                                            {user.email?.[0]?.toUpperCase() || 'U'}
+                                        </div>
+                                        <div className="user-details">
+                                            <span className="user-name">{user.user_metadata?.display_name || user.email?.split('@')[0]}</span>
+                                            <span className="user-email">{user.email}</span>
+                                        </div>
+                                    </div>
+                                )}
+                                <button className="btn btn-ghost nav-item" onClick={signOut}>
+                                    <LogOut size={20} />
+                                    <span>Sign Out</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* Bottom Navigation Bar */}
+                <nav className="mobile-bottom-nav">
+                    {bottomNavItems.map(item => (
+                        <NavLink
+                            key={item.to}
+                            to={item.to}
+                            className={({ isActive }) =>
+                                `bottom-nav-item ${isActive ? 'active' : ''}`
+                            }
+                            end={item.to === '/'}
+                        >
+                            <item.icon size={20} />
+                            <span>{item.label}</span>
+                        </NavLink>
+                    ))}
+                </nav>
+            </>
+        );
+    }
+
+    // Desktop layout: classic sidebar
     return (
         <aside className={`sidebar ${collapsed ? 'collapsed' : ''}`}>
             <div className="sidebar-header">

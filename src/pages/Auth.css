@@ -100,3 +100,22 @@
     font-size: var(--font-sm);
     color: var(--text-secondary);
 }
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+    .auth-container {
+        max-width: 100%;
+        padding: var(--space-xl) var(--space-lg);
+        margin: 0 var(--space-md);
+        border-radius: var(--radius-lg);
+    }
+
+    .auth-header h1 {
+        font-size: var(--font-2xl);
+    }
+
+    .auth-logo {
+        width: 52px;
+        height: 52px;
+    }
+}

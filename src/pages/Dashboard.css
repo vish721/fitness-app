@@ -241,11 +241,75 @@
     .dashboard-hero {
         flex-direction: column;
         text-align: center;
-        gap: var(--space-xl);
-        padding: var(--space-xl);
+        gap: var(--space-lg);
+        padding: var(--space-lg);
+    }
+
+    .hero-content h1 {
+        font-size: var(--font-xl);
+    }
+
+    .hero-content p {
+        font-size: var(--font-sm);
+        margin-bottom: var(--space-md);
+    }
+
+    .hero-content .btn {
+        width: 100%;
+    }
+
+    .streak-number {
+        font-size: var(--font-3xl);
+    }
+
+    .dashboard-stats.grid-4 {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: var(--space-sm);
     }
 
     .dashboard-grid {
         grid-template-columns: 1fr;
+    }
+
+    /* Calendar */
+    .calendar-week-row {
+        gap: 4px;
+        min-height: 72px;
+    }
+
+    .calendar-day-cell {
+        padding: 4px;
+    }
+
+    .day-number {
+        font-size: 9px;
+    }
+
+    .day-workout-tag {
+        font-size: 8px;
+        padding: 1px 3px;
+    }
+
+    .calendar-weeks-scroll {
+        max-height: 280px;
+        gap: 8px;
+    }
+
+    .calendar-header-days {
+        font-size: 10px;
+    }
+
+    /* Recent items */
+    .recent-item {
+        padding: var(--space-sm) var(--space-md);
+    }
+
+    .recent-item-name {
+        font-size: var(--font-xs);
+    }
+
+    .dashboard-longest-streak {
+        padding: var(--space-md) var(--space-lg) !important;
+        font-size: var(--font-xs);
     }
 }

@@ -98,3 +98,28 @@
 .te-input {
     text-align: center;
 }
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+    .template-card-actions {
+        opacity: 1;
+    }
+
+    .template-card-header h3 {
+        font-size: var(--font-base);
+    }
+
+    .te-preview {
+        font-size: var(--font-xs);
+        padding: var(--space-sm);
+    }
+
+    .template-exercise-row {
+        font-size: var(--font-xs);
+        padding: var(--space-sm);
+    }
+
+    .te-input {
+        max-width: 60px;
+    }
+}

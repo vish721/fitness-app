@@ -68,3 +68,31 @@
 .recharts-text {
     fill: var(--text-secondary) !important;
 }
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+    .pr-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .pr-values {
+        grid-template-columns: repeat(3, 1fr);
+        gap: var(--space-sm);
+    }
+
+    .pr-number {
+        font-size: var(--font-base);
+    }
+
+    .chart-card {
+        padding: var(--space-md);
+    }
+
+    .progress-section {
+        margin-bottom: var(--space-2xl);
+    }
+
+    .progress-section h2 {
+        font-size: var(--font-lg);
+    }
+}

@@ -49,3 +49,35 @@
     -webkit-box-orient: vertical;
     overflow: hidden;
 }
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+    .muscle-filters {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: var(--space-sm);
+        gap: var(--space-xs);
+        scrollbar-width: none;
+    }
+
+    .muscle-filters::-webkit-scrollbar {
+        display: none;
+    }
+
+    .muscle-filters .btn {
+        flex-shrink: 0;
+        min-height: 36px;
+        font-size: 11px;
+        padding: var(--space-sm) var(--space-md);
+    }
+
+    /* Always show card actions on mobile (no hover on touch) */
+    .exercise-card-actions {
+        opacity: 1;
+    }
+
+    .exercise-card-header h3 {
+        font-size: var(--font-sm);
+    }
+}
