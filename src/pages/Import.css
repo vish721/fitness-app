@@ -1,0 +1,104 @@
+.import-mode-toggle {
+    display: flex;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-xl);
+}
+
+.import-input-card {
+    max-width: 600px;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xl);
+}
+
+.parsed-exercises {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    margin-bottom: var(--space-xl);
+}
+
+.parsed-exercise-card {
+    transition: all var(--transition-fast);
+}
+
+.parsed-exercise-card.deselected {
+    opacity: 0.4;
+}
+
+.parsed-exercise-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    margin-bottom: var(--space-md);
+}
+
+.parsed-checkbox {
+    position: relative;
+    display: flex;
+    cursor: pointer;
+}
+
+.parsed-checkbox input {
+    width: 20px;
+    height: 20px;
+    accent-color: var(--accent-primary);
+    cursor: pointer;
+}
+
+.parsed-exercise-details {
+    display: flex;
+    gap: var(--space-md);
+    align-items: center;
+}
+
+.import-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.import-success {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: var(--space-3xl);
+}
+
+.import-success-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: var(--radius-full);
+    background: var(--success-subtle);
+    color: var(--success);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: var(--space-xl);
+}
+
+.import-success h2 {
+    font-size: var(--font-2xl);
+    margin-bottom: var(--space-sm);
+}
+
+.import-success p {
+    color: var(--text-secondary);
+    margin-bottom: var(--space-xl);
+}
+
+.spin {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}

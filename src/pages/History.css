@@ -1,0 +1,64 @@
+.history-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+}
+
+.history-card-main {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    cursor: pointer;
+}
+
+.history-card-info h3 {
+    font-size: var(--font-base);
+    font-weight: 700;
+    margin-bottom: var(--space-xs);
+}
+
+.history-card-meta {
+    display: flex;
+    gap: var(--space-lg);
+    font-size: var(--font-xs);
+    color: var(--text-tertiary);
+}
+
+.history-notes {
+    font-size: var(--font-sm);
+    color: var(--text-secondary);
+    margin-top: var(--space-sm);
+    font-style: italic;
+}
+
+.history-detail {
+    margin-top: var(--space-lg);
+    padding-top: var(--space-lg);
+    border-top: 1px solid var(--border-subtle);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+}
+
+.history-exercise-group h4 {
+    font-size: var(--font-sm);
+    font-weight: 700;
+    color: var(--accent-primary-hover);
+    margin-bottom: var(--space-sm);
+}
+
+.history-sets {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+}
+
+.history-set {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    padding: var(--space-sm) var(--space-md);
+    background: var(--bg-glass);
+    border-radius: var(--radius-sm);
+    font-size: var(--font-sm);
+}

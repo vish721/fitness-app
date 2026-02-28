@@ -1,0 +1,70 @@
+.progress-section {
+    margin-bottom: var(--space-3xl);
+}
+
+.progress-section h2 {
+    font-size: var(--font-xl);
+    font-weight: 700;
+    margin-bottom: var(--space-lg);
+}
+
+.pr-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--space-md);
+}
+
+.pr-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+}
+
+.pr-card h4 {
+    font-size: var(--font-base);
+    font-weight: 700;
+}
+
+.pr-values {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-md);
+    margin-top: var(--space-md);
+}
+
+.pr-value {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.pr-label {
+    font-size: var(--font-xs);
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.pr-number {
+    font-size: var(--font-lg);
+    font-weight: 800;
+    background: var(--accent-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.chart-card {
+    padding: var(--space-lg);
+}
+
+.chart-card h4 {
+    font-size: var(--font-sm);
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: var(--space-md);
+}
+
+.recharts-text {
+    fill: var(--text-secondary) !important;
+}
