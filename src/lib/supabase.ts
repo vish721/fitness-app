@@ -165,6 +165,40 @@ export type Database = {
           achieved_at?: string;
         };
       };
+      friendships: {
+        Row: {
+          id: string;
+          requester_id: string;
+          addressee_id: string;
+          status: 'pending' | 'accepted' | 'declined' | 'blocked';
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          requester_id: string;
+          addressee_id: string;
+          status?: 'pending' | 'accepted' | 'declined' | 'blocked';
+        };
+        Update: {
+          status?: 'pending' | 'accepted' | 'declined' | 'blocked';
+          updated_at?: string;
+        };
+      };
+      workout_reactions: {
+        Row: {
+          id: string;
+          workout_id: string;
+          user_id: string;
+          emoji: '💪' | '🔥' | '👏';
+          created_at: string;
+        };
+        Insert: {
+          workout_id: string;
+          user_id: string;
+          emoji: '💪' | '🔥' | '👏';
+        };
+        Update: Record<string, never>;
+      };
     };
   };
 };
@@ -184,3 +218,5 @@ export type WorkoutSet = Database['public']['Tables']['workout_sets']['Row'];
 export type WorkoutTemplate = Database['public']['Tables']['workout_templates']['Row'];
 export type PersonalRecord = Database['public']['Tables']['personal_records']['Row'];
 export type Profile = Database['public']['Tables']['profiles']['Row'];
+export type Friendship = Database['public']['Tables']['friendships']['Row'];
+export type WorkoutReaction = Database['public']['Tables']['workout_reactions']['Row'];

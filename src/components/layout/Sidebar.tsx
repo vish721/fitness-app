@@ -5,6 +5,7 @@ import {
     ClipboardList,
     Play,
     History,
+    Users,
     TrendingUp,
     Link,
     LogOut,
@@ -26,6 +27,7 @@ const navItems = [
     { to: '/history', icon: History, label: 'History' },
     { to: '/progress', icon: TrendingUp, label: 'Progress' },
     { to: '/import', icon: Link, label: 'Import' },
+    { to: '/social', icon: Users, label: 'Social' },
 ];
 
 // Bottom nav shows these 5 items (most used), rest in "more" menu
@@ -35,6 +37,7 @@ const bottomNavItems = [
     { to: '/exercises', icon: Dumbbell, label: 'Exercises' },
     { to: '/history', icon: History, label: 'History' },
     { to: '/progress', icon: TrendingUp, label: 'Progress' },
+    { to: '/social', icon: Users, label: 'Social' },
 ];
 
 export default function Sidebar() {
