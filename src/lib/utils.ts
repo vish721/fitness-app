@@ -119,6 +119,30 @@ export function calculateStreak(workoutDates: Date[]): { current: number; longes
     return { current: currentStreak, longest: longestStreak };
 }
 
+export function getRollingCalendarData(workouts: any[], weeks: number = 12) {
+    const endDate = endOfWeek(new Date(), { weekStartsOn: 1 });
+    const startDate = subWeeks(startOfWeek(endDate, { weekStartsOn: 1 }), weeks - 1);
+    const days = eachDayOfInterval({ start: startDate, end: endDate });
+
+    const weeks_data = [];
+    for (let i = 0; i < weeks; i++) {
+        const weekDays = days.slice(i * 7, (i + 1) * 7);
+        weeks_data.push({
+            weekStart: weekDays[0],
+            days: weekDays.map(day => {
+                const dayWorkouts = workouts.filter(w => w.completed_at && isSameDay(new Date(w.started_at), day));
+                return {
+                    date: day,
+                    isToday: isToday(day),
+                    workouts: dayWorkouts,
+                };
+            })
+        });
+    }
+
+    return weeks_data.reverse();
+}
+
 export function cn(...classes: (string | boolean | undefined | null)[]): string {
     return classes.filter(Boolean).join(' ');
 }

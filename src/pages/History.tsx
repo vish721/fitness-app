@@ -1,18 +1,32 @@
 import { useState, useEffect } from 'react';
-import { History as HistoryIcon, Calendar, Clock, Trash2, ChevronDown, ChevronUp, Dumbbell } from 'lucide-react';
+import { useLocation } from 'react-router-dom';
+import { History as HistoryIcon, Calendar, Clock, Trash2, ChevronDown, ChevronUp } from 'lucide-react';
 import { useWorkouts, useExercises } from '../lib/hooks';
 import { supabase } from '../lib/supabase';
 import type { WorkoutSet } from '../lib/supabase';
-import { formatDate, formatTime, formatDuration, formatRelative } from '../lib/utils';
+import { formatDate, formatDuration } from '../lib/utils';
 import toast from 'react-hot-toast';
 import './History.css';
 
 export default function History() {
     const { workouts, loading, deleteWorkout } = useWorkouts();
     const { exercises } = useExercises();
+    const location = useLocation();
     const completedWorkouts = workouts.filter(w => w.completed_at);
     const [expandedId, setExpandedId] = useState<string | null>(null);
     const [expandedSets, setExpandedSets] = useState<WorkoutSet[]>([]);
+
+    useEffect(() => {
+        // Handle auto-expand if workoutId is in location state
+        if (workouts.length > 0 && location.state?.workoutId) {
+            toggleExpand(location.state.workoutId);
+            // Scroll to the element after a brief delay
+            setTimeout(() => {
+                const el = document.getElementById(`workout-${location.state.workoutId}`);
+                if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 100);
+        }
+    }, [workouts.length, location.state]);
 
     const toggleExpand = async (workoutId: string) => {
         if (expandedId === workoutId) {
@@ -66,7 +80,7 @@ export default function History() {
             ) : (
                 <div className="history-list">
                     {completedWorkouts.map(workout => (
-                        <div key={workout.id} className="card history-card animate-in">
+                        <div key={workout.id} id={`workout-${workout.id}`} className="card history-card animate-in">
                             <div className="history-card-main" onClick={() => toggleExpand(workout.id)}>
                                 <div className="history-card-info">
                                     <h3>{workout.name}</h3>

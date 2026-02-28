@@ -1,13 +1,12 @@
-import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-    Flame, TrendingUp, Dumbbell, Trophy, Play,
+    Flame, Dumbbell, Trophy, Play,
     ChevronRight, Calendar, Zap, Target
 } from 'lucide-react';
 import { useWorkouts } from '../lib/hooks';
 import { useExercises } from '../lib/hooks';
 import { usePersonalRecords } from '../lib/hooks';
-import { formatDate, formatDuration, formatRelative, calculateStreak, getStreakData } from '../lib/utils';
+import { formatDuration, formatRelative, calculateStreak, getRollingCalendarData, cn } from '../lib/utils';
 import './Dashboard.css';
 
 export default function Dashboard() {
@@ -18,7 +17,7 @@ export default function Dashboard() {
     const completedWorkouts = workouts.filter(w => w.completed_at);
     const workoutDates = completedWorkouts.map(w => new Date(w.started_at));
     const streak = calculateStreak(workoutDates);
-    const streakData = getStreakData(workoutDates);
+    const rollingData = getRollingCalendarData(workouts);
 
     // This week's workouts
     const now = new Date();
@@ -94,25 +93,42 @@ export default function Dashboard() {
                 <div className="card dashboard-calendar">
                     <div className="flex items-center justify-between" style={{ marginBottom: 'var(--space-lg)' }}>
                         <h3>Activity</h3>
-                        <span className="text-sm text-secondary">Last 12 weeks</span>
+                        <span className="text-sm text-secondary">Rolling view</span>
                     </div>
-                    <div className="streak-grid">
-                        {streakData.map((day, i) => (
-                            <div
-                                key={i}
-                                className={`streak-cell level-${day.level} ${day.isToday ? 'today' : ''}`}
-                                title={`${formatDate(day.date)}: ${day.count} workout${day.count !== 1 ? 's' : ''}`}
-                            />
-                        ))}
-                    </div>
-                    <div className="streak-legend">
-                        <span>Less</span>
-                        <div className="streak-cell" />
-                        <div className="streak-cell level-1" />
-                        <div className="streak-cell level-2" />
-                        <div className="streak-cell level-3" />
-                        <div className="streak-cell level-4" />
-                        <span>More</span>
+
+                    <div className="calendar-rolling-container">
+                        <div className="calendar-header-days">
+                            <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+                        </div>
+                        <div className="calendar-weeks-scroll">
+                            {rollingData.map((week, idx) => (
+                                <div key={idx} className="calendar-week-row">
+                                    {week.days.map((day, dIdx) => (
+                                        <div key={dIdx} className={cn("calendar-day-cell", day.isToday && "is-today")}>
+                                            <span className="day-number">
+                                                {day.date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+                                            </span>
+                                            <div className="day-workouts">
+                                                {day.workouts.map((w, wIdx) => (
+                                                    <div
+                                                        key={wIdx}
+                                                        className="day-workout-tag"
+                                                        title={w.name}
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            navigate('/history', { state: { workoutId: w.id } });
+                                                        }}
+                                                        style={{ cursor: 'pointer' }}
+                                                    >
+                                                        {w.name}
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            ))}
+                        </div>
                     </div>
                 </div>
 
