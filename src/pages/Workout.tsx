@@ -1,11 +1,11 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
-    Play, Square, Plus, Trash2, Timer, Trophy,
-    CheckCircle, ChevronDown, ChevronUp, Dumbbell
+    Play, Square, Plus, Trash2, Timer,
+    CheckCircle, ChevronDown, ChevronUp
 } from 'lucide-react';
 import { useWorkouts, useWorkoutSets, useExercises, usePersonalRecords } from '../lib/hooks';
-import type { WorkoutTemplate, TemplateExercise } from '../lib/supabase';
+import type { WorkoutTemplate } from '../lib/supabase';
 import { formatTimerDisplay, cn } from '../lib/utils';
 import toast from 'react-hot-toast';
 import './Workout.css';
@@ -45,7 +45,7 @@ export default function Workout() {
     // Rest timer
     const [restTime, setRestTime] = useState(0);
     const [restActive, setRestActive] = useState(false);
-    const [restDuration, setRestDuration] = useState(90);
+    const [restDuration] = useState(90);
     const restInterval = useRef<number | null>(null);
 
     const { addSet } = useWorkoutSets(workoutId);

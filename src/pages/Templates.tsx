@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Plus, ClipboardList, Trash2, Edit2, Copy, Play } from 'lucide-react';
 import { useTemplates, useExercises } from '../lib/hooks';
 import { useNavigate } from 'react-router-dom';
-import { MUSCLE_GROUP_BADGE_CLASS } from '../lib/utils';
+
 import type { TemplateExercise } from '../lib/supabase';
 import toast from 'react-hot-toast';
 import './Templates.css';

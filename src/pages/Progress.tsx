@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
-import { TrendingUp, Trophy, Dumbbell, BarChart3 } from 'lucide-react';
+import { TrendingUp, Trophy, BarChart3 } from 'lucide-react';
 import { useExercises, usePersonalRecords, useAllWorkoutSets, useWorkouts } from '../lib/hooks';
-import { formatDate, calculateOneRepMax, MUSCLE_GROUPS, MUSCLE_GROUP_BADGE_CLASS } from '../lib/utils';
+import { formatDate, calculateOneRepMax, MUSCLE_GROUP_BADGE_CLASS } from '../lib/utils';
 import {
     ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip,
     CartesianGrid, AreaChart, Area, PieChart, Pie, Cell
@@ -228,7 +228,7 @@ export default function Progress() {
                                         cy="50%"
                                         outerRadius={100}
                                         dataKey="value"
-                                        label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                                        label={({ name, percent }: any) => `${name ?? ''} ${((percent ?? 0) * 100).toFixed(0)}%`}
                                         labelLine={false}
                                         fontSize={11}
                                     >
@@ -238,7 +238,7 @@ export default function Progress() {
                                     </Pie>
                                     <Tooltip
                                         contentStyle={{ background: '#1a1a2e', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '10px' }}
-                                        formatter={(value: number) => [`${value.toLocaleString()} kg`, 'Volume']}
+                                        formatter={((value: any) => [`${Number(value).toLocaleString()} kg`, 'Volume']) as any}
                                     />
                                 </PieChart>
                             </ResponsiveContainer>

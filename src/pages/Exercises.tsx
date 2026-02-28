@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Search, Plus, Filter, Trash2, Edit2, Dumbbell } from 'lucide-react';
+import { Search, Plus, Trash2, Edit2, Dumbbell } from 'lucide-react';
 import { useExercises } from '../lib/hooks';
 import { MUSCLE_GROUPS, EQUIPMENT_OPTIONS, MUSCLE_GROUP_BADGE_CLASS, cn } from '../lib/utils';
 import toast from 'react-hot-toast';
