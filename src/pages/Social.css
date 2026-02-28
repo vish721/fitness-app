@@ -5,7 +5,7 @@
     display: flex;
     gap: var(--space-xs);
     background: var(--bg-card);
-    border: 1px solid var(--border-subtle);
+    border: none;
     border-radius: var(--radius-lg);
     padding: var(--space-xs);
     margin-bottom: var(--space-xl);
@@ -62,17 +62,17 @@
 
 .feed-card {
     background: var(--bg-card);
-    border: 1px solid var(--border-subtle);
+    border: none;
     border-radius: var(--radius-lg);
     padding: var(--space-xl);
-    backdrop-filter: blur(20px);
     animation: slideUp var(--transition-base) ease-out;
     transition: all var(--transition-base);
 }
 
 .feed-card:hover {
-    border-color: var(--border-default);
+    background: var(--bg-card-hover);
 }
+
 
 .feed-card-header {
     display: flex;
@@ -85,7 +85,7 @@
     width: 40px;
     height: 40px;
     border-radius: var(--radius-full);
-    background: var(--accent-gradient);
+    background: var(--accent-primary);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -177,7 +177,7 @@
     gap: var(--space-xs);
     padding: 6px 12px;
     border-radius: var(--radius-full);
-    border: 1px solid var(--border-subtle);
+    border: none;
     background: var(--bg-glass);
     cursor: pointer;
     transition: all var(--transition-fast);
@@ -187,13 +187,11 @@
 }
 
 .reaction-btn:hover {
-    border-color: var(--border-default);
     background: var(--bg-glass-hover);
     transform: scale(1.05);
 }
 
 .reaction-btn.active {
-    border-color: var(--accent-primary);
     background: var(--accent-primary-subtle);
     color: var(--accent-primary);
 }
@@ -243,7 +241,7 @@
     gap: var(--space-md);
     padding: var(--space-lg);
     background: var(--bg-card);
-    border: 1px solid var(--border-subtle);
+    border: none;
     border-radius: var(--radius-lg);
     margin-bottom: var(--space-sm);
     transition: all var(--transition-fast);
@@ -251,7 +249,7 @@
 }
 
 .friend-card:hover {
-    border-color: var(--border-default);
+    background: var(--bg-card-hover);
 }
 
 .friend-info {
@@ -283,7 +281,7 @@
     gap: var(--space-md);
     padding: var(--space-lg);
     background: var(--bg-card);
-    border: 1px solid var(--accent-primary);
+    border: 1px solid rgba(0, 162, 255, 0.2);
     border-radius: var(--radius-lg);
     margin-bottom: var(--space-xl);
     animation: slideUp var(--transition-fast) ease-out;
@@ -306,24 +304,22 @@
     gap: var(--space-md);
     padding: var(--space-lg) var(--space-xl);
     background: var(--bg-card);
-    border: 1px solid var(--border-subtle);
+    border: none;
     border-radius: var(--radius-lg);
     transition: all var(--transition-fast);
     animation: slideUp var(--transition-base) ease-out;
 }
 
 .leaderboard-card:hover {
-    border-color: var(--border-default);
+    background: var(--bg-card-hover);
 }
 
 .leaderboard-card.current-user {
-    border-color: var(--accent-primary);
-    background: rgba(0, 162, 255, 0.05);
+    background: rgba(0, 162, 255, 0.06);
 }
 
 .leaderboard-card.top-1 {
-    border-color: #f59e0b;
-    background: rgba(245, 158, 11, 0.05);
+    background: rgba(245, 158, 11, 0.06);
 }
 
 .leaderboard-rank {

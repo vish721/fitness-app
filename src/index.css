@@ -1,41 +1,41 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
 :root {
-  /* Colors - Dark Theme */
-  --bg-primary: #050505;
-  --bg-secondary: #0a0a0a;
+  /* Colors - Minimal Dark Theme */
+  --bg-primary: #000000;
+  --bg-secondary: #050505;
   --bg-tertiary: #111111;
-  --bg-card: rgba(15, 15, 20, 0.7);
-  --bg-card-hover: rgba(20, 20, 30, 0.9);
-  --bg-glass: rgba(255, 255, 255, 0.02);
-  --bg-glass-hover: rgba(255, 255, 255, 0.04);
+  --bg-card: #111111;
+  --bg-card-hover: #191919;
+  --bg-glass: #0e0e0e;
+  --bg-glass-hover: #161616;
 
   --border-subtle: rgba(255, 255, 255, 0.06);
   --border-default: rgba(255, 255, 255, 0.1);
-  --border-focus: rgba(0, 162, 255, 0.5);
+  --border-focus: rgba(0, 162, 255, 0.4);
 
-  --text-primary: #f1f1f7;
-  --text-secondary: #8b8b9e;
-  --text-tertiary: #5a5a72;
-  --text-inverse: #0a0a0f;
+  --text-primary: #f0f0f0;
+  --text-secondary: #7a7a8e;
+  --text-tertiary: #4a4a5c;
+  --text-inverse: #000000;
 
   /* Accent Colors */
   --accent-primary: #00a2ff;
-  --accent-primary-hover: #33b5ff;
-  --accent-primary-subtle: rgba(0, 162, 255, 0.12);
+  --accent-primary-hover: #2eb8ff;
+  --accent-primary-subtle: rgba(0, 162, 255, 0.1);
   --accent-secondary: #0066ff;
-  --accent-gradient: linear-gradient(135deg, #00a2ff, #0066ff);
-  --accent-gradient-hover: linear-gradient(135deg, #33b5ff, #1a7bff);
+  --accent-gradient: #00a2ff;
+  --accent-gradient-hover: #2eb8ff;
 
   /* Semantic Colors */
   --success: #22c55e;
-  --success-subtle: rgba(34, 197, 94, 0.15);
+  --success-subtle: rgba(34, 197, 94, 0.1);
   --warning: #f59e0b;
-  --warning-subtle: rgba(245, 158, 11, 0.15);
+  --warning-subtle: rgba(245, 158, 11, 0.1);
   --danger: #ef4444;
-  --danger-subtle: rgba(239, 68, 68, 0.15);
+  --danger-subtle: rgba(239, 68, 68, 0.1);
   --info: #3b82f6;
-  --info-subtle: rgba(59, 130, 246, 0.15);
+  --info-subtle: rgba(59, 130, 246, 0.1);
 
   /* Muscle Group Colors */
   --muscle-chest: #ef4444;
@@ -75,10 +75,10 @@
   --radius-full: 9999px;
 
   /* Shadows */
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
-  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
-  --shadow-glow: 0 0 20px rgba(0, 162, 255, 0.25);
+  --shadow-sm: none;
+  --shadow-md: none;
+  --shadow-lg: none;
+  --shadow-glow: none;
 
   /* Transitions */
   --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
@@ -183,26 +183,24 @@ button {
 }
 
 .btn-primary {
-  background: var(--accent-gradient);
+  background: var(--accent-primary);
   color: white;
-  box-shadow: var(--shadow-sm);
 }
 
 .btn-primary:hover {
-  background: var(--accent-gradient-hover);
-  box-shadow: var(--shadow-glow);
+  background: var(--accent-primary-hover);
   transform: translateY(-1px);
 }
 
 .btn-secondary {
   background: var(--bg-glass);
   color: var(--text-primary);
-  border: 1px solid var(--border-default);
+  border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .btn-secondary:hover {
   background: var(--bg-glass-hover);
-  border-color: var(--border-focus);
+  border-color: rgba(255, 255, 255, 0.1);
 }
 
 .btn-danger {
@@ -263,7 +261,7 @@ button {
 
 .input {
   background: var(--bg-glass);
-  border: 1px solid var(--border-subtle);
+  border: 1px solid rgba(255, 255, 255, 0.04);
   border-radius: var(--radius-md);
   padding: var(--space-md) var(--space-lg);
   color: var(--text-primary);
@@ -274,8 +272,7 @@ button {
 }
 
 .input:focus {
-  border-color: var(--border-focus);
-  box-shadow: 0 0 0 3px var(--accent-primary-subtle);
+  border-color: var(--accent-primary);
 }
 
 .input::placeholder {
@@ -304,18 +301,15 @@ textarea.input {
 /* Cards */
 .card {
   background: var(--bg-card);
-  border: 1px solid var(--border-subtle);
+  border: none;
   border-radius: var(--radius-lg);
   padding: var(--space-xl);
-  backdrop-filter: blur(20px);
   transition: all var(--transition-base);
 }
 
 .card-interactive:hover {
-  border-color: var(--border-focus);
   background: var(--bg-card-hover);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
 }
 
 .card-glow {
@@ -324,19 +318,7 @@ textarea.input {
 }
 
 .card-glow::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: var(--accent-gradient);
-  opacity: 0;
-  transition: opacity var(--transition-base);
-}
-
-.card-glow:hover::before {
-  opacity: 1;
+  display: none;
 }
 
 /* Badges */
@@ -431,8 +413,8 @@ textarea.input {
 }
 
 .modal {
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-default);
+  background: #111;
+  border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: var(--radius-xl);
   padding: var(--space-2xl);
   width: 100%;
@@ -440,7 +422,6 @@ textarea.input {
   max-height: 90vh;
   overflow-y: auto;
   animation: slideUp var(--transition-base) ease-out;
-  box-shadow: var(--shadow-lg);
 }
 
 .modal-header {
@@ -467,7 +448,7 @@ textarea.input {
   gap: var(--space-md);
   margin-top: var(--space-xl);
   padding-top: var(--space-lg);
-  border-top: 1px solid var(--border-subtle);
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
 }
 
 /* Layout */
@@ -484,10 +465,7 @@ textarea.input {
 .page-header h1 {
   font-size: var(--font-3xl);
   font-weight: 800;
-  background: var(--accent-gradient);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--text-primary);
   line-height: 1.2;
 }
 
@@ -529,13 +507,12 @@ textarea.input {
 /* Stats */
 .stat-card {
   background: var(--bg-card);
-  border: 1px solid var(--border-subtle);
+  border: none;
   border-radius: var(--radius-lg);
   padding: var(--space-xl);
   display: flex;
   flex-direction: column;
   gap: var(--space-sm);
-  backdrop-filter: blur(20px);
 }
 
 .stat-card .stat-label {
@@ -774,14 +751,13 @@ textarea.input {
   position: fixed;
   bottom: var(--space-xl);
   right: var(--space-xl);
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-default);
+  background: #111;
+  border: none;
   border-radius: var(--radius-xl);
   padding: var(--space-lg) var(--space-xl);
   display: flex;
   align-items: center;
   gap: var(--space-lg);
-  box-shadow: var(--shadow-lg);
   z-index: 100;
   animation: slideUp var(--transition-base) ease-out;
 }

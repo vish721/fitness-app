@@ -1,6 +1,6 @@
 .dashboard-hero {
     background: var(--bg-card);
-    border: 1px solid var(--border-subtle);
+    border: none;
     border-radius: var(--radius-xl);
     padding: var(--space-2xl) var(--space-3xl);
     display: flex;
@@ -9,18 +9,10 @@
     margin-bottom: var(--space-2xl);
     position: relative;
     overflow: hidden;
-    backdrop-filter: blur(20px);
 }
 
 .dashboard-hero::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: radial-gradient(circle at 80% 50%, rgba(99, 102, 241, 0.1) 0%, transparent 60%);
-    pointer-events: none;
+    display: none;
 }
 
 .hero-content {
@@ -55,15 +47,11 @@
     gap: var(--space-md);
     font-size: var(--font-4xl);
     font-weight: 900;
-    background: var(--accent-gradient);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: var(--accent-primary);
 }
 
 .streak-number svg {
-    color: var(--warning);
-    -webkit-text-fill-color: initial;
+    color: var(--accent-primary);
 }
 
 .streak-label {
@@ -115,7 +103,7 @@
     font-weight: 700;
     color: var(--text-tertiary);
     padding-bottom: var(--space-xs);
-    border-bottom: 1px solid var(--border-subtle);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
 }
 
 .calendar-weeks-scroll {
@@ -137,7 +125,7 @@
 
 .calendar-day-cell {
     background: var(--bg-glass);
-    border: 1px solid var(--border-subtle);
+    border: none;
     border-radius: var(--radius-md);
     padding: 6px;
     display: flex;
@@ -148,8 +136,7 @@
 }
 
 .calendar-day-cell.is-today {
-    border-color: var(--accent-primary);
-    background: rgba(0, 162, 255, 0.05);
+    background: rgba(0, 162, 255, 0.08);
 }
 
 .calendar-day-cell.is-today .day-number {

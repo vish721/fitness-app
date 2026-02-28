@@ -4,7 +4,7 @@
     justify-content: space-between;
     margin-bottom: var(--space-2xl);
     padding-bottom: var(--space-lg);
-    border-bottom: 1px solid var(--border-subtle);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
 }
 
 .workout-header h1 {
@@ -39,7 +39,7 @@
     justify-content: space-between;
     cursor: pointer;
     padding-bottom: var(--space-md);
-    border-bottom: 1px solid var(--border-subtle);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
     margin-bottom: var(--space-md);
 }
 
@@ -47,7 +47,7 @@
     width: 28px;
     height: 28px;
     border-radius: var(--radius-full);
-    background: var(--accent-gradient);
+    background: var(--accent-primary);
     color: white;
     display: flex;
     align-items: center;
