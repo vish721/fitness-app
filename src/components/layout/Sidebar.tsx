@@ -1,4 +1,4 @@
-import { NavLink, useLocation } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import {
     LayoutDashboard,
     Dumbbell,
@@ -29,7 +29,7 @@ const navItems = [
 export default function Sidebar() {
     const { user, signOut } = useAuth();
     const [collapsed, setCollapsed] = useState(false);
-    const location = useLocation();
+
 
     return (
         <aside className={`sidebar ${collapsed ? 'collapsed' : ''}`}>
@@ -38,7 +38,7 @@ export default function Sidebar() {
                     <div className="logo-icon">
                         <Flame size={24} />
                     </div>
-                    {!collapsed && <span className="logo-text">FitForge</span>}
+                    {!collapsed && <span className="logo-text">Chud2Chad</span>}
                 </div>
                 <button
                     className="btn btn-ghost btn-icon collapse-btn"

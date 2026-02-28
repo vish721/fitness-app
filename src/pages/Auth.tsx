@@ -1,4 +1,4 @@
-import { useState, FormEvent } from 'react';
+import { useState, type FormEvent } from 'react';
 import { Flame, Mail, Lock, User, ArrowRight } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import toast from 'react-hot-toast';
@@ -44,7 +44,7 @@ export default function Auth() {
                     <div className="auth-logo">
                         <Flame size={32} />
                     </div>
-                    <h1>FitForge</h1>
+                    <h1>Chud2Chad</h1>
                     <p>Your personal workout companion</p>
                 </div>
 

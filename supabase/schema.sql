@@ -1,5 +1,5 @@
 -- ============================================
--- FitForge Database Schema
+-- Chud2Chad Database Schema
 -- Run this SQL in your Supabase SQL Editor
 -- ============================================
 
