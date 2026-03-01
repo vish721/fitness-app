@@ -464,6 +464,14 @@ export function useOnboardingStatus() {
                 return;
             }
 
+            // Check localStorage first — if onboarding was already completed, skip DB query
+            const storageKey = `onboarding_completed_${user.id}`;
+            if (localStorage.getItem(storageKey) === 'true') {
+                setNeedsOnboarding(false);
+                setLoading(false);
+                return;
+            }
+
             // Check if user has any exercises
             const { count, error } = await supabase
                 .from('exercises')
@@ -471,7 +479,13 @@ export function useOnboardingStatus() {
                 .eq('user_id', user.id);
 
             if (!error) {
-                setNeedsOnboarding(count === 0);
+                if (count !== null && count > 0) {
+                    // User already has exercises — mark onboarding as done
+                    localStorage.setItem(storageKey, 'true');
+                    setNeedsOnboarding(false);
+                } else {
+                    setNeedsOnboarding(true);
+                }
             }
             setLoading(false);
         };
@@ -480,6 +494,9 @@ export function useOnboardingStatus() {
     }, [user]);
 
     const completeOnboarding = () => {
+        if (user) {
+            localStorage.setItem(`onboarding_completed_${user.id}`, 'true');
+        }
         setNeedsOnboarding(false);
     };
 
