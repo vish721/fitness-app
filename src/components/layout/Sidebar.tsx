@@ -44,7 +44,7 @@ const bottomNavItems = [
 ];
 
 export default function Sidebar() {
-    const { user, signOut } = useAuth();
+    const { user, profile, signOut } = useAuth();
     const { theme, toggleTheme } = useTheme();
     const [collapsed, setCollapsed] = useState(false);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -129,7 +129,8 @@ export default function Sidebar() {
                                             {user.email?.[0]?.toUpperCase() || 'U'}
                                         </div>
                                         <div className="user-details">
-                                            <span className="user-name">{user.user_metadata?.display_name || user.email?.split('@')[0]}</span>
+                                            <span className="user-name">{profile?.display_name || user.user_metadata?.display_name || user.email?.split('@')[0]}</span>
+                                            {profile?.username && <span className="user-username">@{profile.username}</span>}
                                             <span className="user-email">{user.email}</span>
                                         </div>
                                     </div>
@@ -214,7 +215,8 @@ export default function Sidebar() {
                             {user.email?.[0]?.toUpperCase() || 'U'}
                         </div>
                         <div className="user-details">
-                            <span className="user-name">{user.user_metadata?.display_name || user.email?.split('@')[0]}</span>
+                            <span className="user-name">{profile?.display_name || user.user_metadata?.display_name || user.email?.split('@')[0]}</span>
+                            {profile?.username && <span className="user-username">@{profile.username}</span>}
                             <span className="user-email">{user.email}</span>
                         </div>
                     </div>

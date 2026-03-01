@@ -158,6 +158,15 @@
     text-overflow: ellipsis;
 }
 
+.user-username {
+    font-size: var(--font-xs);
+    color: var(--accent-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-weight: 500;
+}
+
 /* Content area offset (desktop only) */
 .app-content {
     margin-left: var(--sidebar-width);
