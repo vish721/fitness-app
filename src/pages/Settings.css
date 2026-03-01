@@ -1,0 +1,106 @@
+.settings-section {
+    margin-bottom: var(--space-xl);
+}
+
+.settings-section-title {
+    font-size: var(--font-lg);
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: var(--space-md);
+}
+
+.settings-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-xl);
+    padding: var(--space-xl);
+}
+
+.settings-avatar {
+    width: 72px;
+    height: 72px;
+    border-radius: var(--radius-full);
+    background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary, #8b5cf6));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: var(--font-2xl);
+    font-weight: 800;
+    margin-bottom: var(--space-xl);
+}
+
+.settings-fields {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+}
+
+.settings-fields .input-group {
+    margin-bottom: 0;
+}
+
+.input-readonly {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Settings option row (for toggles, actions) */
+.settings-option {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-lg);
+}
+
+.settings-option-info {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    color: var(--text-secondary);
+}
+
+.settings-option-info>div {
+    display: flex;
+    flex-direction: column;
+}
+
+.settings-option-label {
+    font-size: var(--font-sm);
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.settings-option-desc {
+    font-size: var(--font-xs);
+    color: var(--text-tertiary);
+}
+
+.btn-danger {
+    background: var(--accent-danger, #ef4444);
+    color: white;
+    border: none;
+}
+
+.btn-danger:hover {
+    background: #dc2626;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    .settings-card {
+        padding: var(--space-lg);
+    }
+
+    .settings-avatar {
+        width: 56px;
+        height: 56px;
+        font-size: var(--font-xl);
+    }
+
+    .settings-option {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-md);
+    }
+}

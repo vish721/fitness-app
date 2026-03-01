@@ -14,11 +14,9 @@ import {
     ChevronRight,
     Menu,
     X,
-    Sun,
-    Moon,
+    Settings,
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
-import { useTheme } from '../../contexts/ThemeContext';
 import { useState, useEffect } from 'react';
 import './Sidebar.css';
 
@@ -31,6 +29,7 @@ const navItems = [
     { to: '/progress', icon: TrendingUp, label: 'Progress' },
     { to: '/import', icon: Link, label: 'Import' },
     { to: '/social', icon: Users, label: 'Social' },
+    { to: '/settings', icon: Settings, label: 'Settings' },
 ];
 
 // Bottom nav shows these items (most used)
@@ -45,7 +44,6 @@ const bottomNavItems = [
 
 export default function Sidebar() {
     const { user, profile, signOut } = useAuth();
-    const { theme, toggleTheme } = useTheme();
     const [collapsed, setCollapsed] = useState(false);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
@@ -75,13 +73,6 @@ export default function Sidebar() {
                         <span className="logo-text logo-text-sm">Chud2Chad</span>
                     </div>
                     <div className="flex items-center gap-sm">
-                        <button
-                            className="btn btn-ghost btn-icon theme-toggle-btn"
-                            onClick={toggleTheme}
-                            aria-label="Toggle theme"
-                        >
-                            {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
-                        </button>
                         <button
                             className="btn btn-ghost btn-icon mobile-menu-btn"
                             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -199,16 +190,6 @@ export default function Sidebar() {
             </nav>
 
             <div className="sidebar-footer">
-                {/* Theme Toggle */}
-                <button
-                    className="btn btn-ghost nav-item theme-toggle-btn"
-                    onClick={toggleTheme}
-                    title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
-                >
-                    {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
-                    {!collapsed && <span>{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>}
-                </button>
-
                 {!collapsed && user && (
                     <div className="user-info">
                         <div className="user-avatar">

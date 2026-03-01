@@ -12,6 +12,7 @@ import History from './pages/History';
 import Progress from './pages/Progress';
 import Import from './pages/Import';
 import Social from './pages/Social';
+import Settings from './pages/Settings';
 import UsernamePrompt from './components/UsernamePrompt';
 import './index.css';
 
@@ -60,6 +61,7 @@ function AppLayout() {
             <Route path="/progress" element={<Progress />} />
             <Route path="/import" element={<Import />} />
             <Route path="/social" element={<Social />} />
+            <Route path="/settings" element={<Settings />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </main>
