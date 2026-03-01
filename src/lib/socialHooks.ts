@@ -10,6 +10,7 @@ export type FriendProfile = Profile & {
     friendship_id: string;
     friendship_status: Friendship['status'];
     is_requester: boolean;
+    username: string | null;
 };
 
 export function useFriends() {
@@ -59,6 +60,7 @@ export function useFriends() {
             return {
                 id: friendId,
                 display_name: profile?.display_name || 'Unknown',
+                username: profile?.username || null,
                 avatar_url: profile?.avatar_url || null,
                 created_at: profile?.created_at || f.created_at,
                 updated_at: profile?.updated_at || f.updated_at,
@@ -77,9 +79,9 @@ export function useFriends() {
 
     useEffect(() => { fetchFriends(); }, [fetchFriends]);
 
-    const searchUserByEmail = async (email: string): Promise<Profile | null> => {
-        const { data, error } = await supabase.rpc('search_user_by_email', {
-            search_email: email.toLowerCase().trim(),
+    const searchUser = async (searchTerm: string): Promise<Profile | null> => {
+        const { data, error } = await supabase.rpc('search_user', {
+            search_term: searchTerm.toLowerCase().trim(),
         });
         if (error || !data || data.length === 0) return null;
         return data[0] as Profile;
@@ -147,7 +149,7 @@ export function useFriends() {
         pendingRequests,
         loading,
         fetchFriends,
-        searchUserByEmail,
+        searchUser,
         sendFriendRequest,
         acceptRequest,
         declineRequest,

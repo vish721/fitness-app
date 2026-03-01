@@ -19,6 +19,7 @@ export type Database = {
         Row: {
           id: string;
           display_name: string | null;
+          username: string | null;
           avatar_url: string | null;
           created_at: string;
           updated_at: string;
@@ -26,10 +27,12 @@ export type Database = {
         Insert: {
           id: string;
           display_name?: string | null;
+          username?: string | null;
           avatar_url?: string | null;
         };
         Update: {
           display_name?: string | null;
+          username?: string | null;
           avatar_url?: string | null;
         };
       };

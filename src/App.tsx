@@ -12,12 +12,13 @@ import History from './pages/History';
 import Progress from './pages/Progress';
 import Import from './pages/Import';
 import Social from './pages/Social';
+import UsernamePrompt from './components/UsernamePrompt';
 import './index.css';
 
 // ... AppLayout unchanged ...
 
 function AppLayout() {
-  const { user, loading } = useAuth();
+  const { user, profile, loading } = useAuth();
 
   if (loading) {
     return (
@@ -45,22 +46,25 @@ function AppLayout() {
   }
 
   return (
-    <div className="app-layout">
-      <Sidebar />
-      <main className="app-content">
-        <Routes>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/exercises" element={<Exercises />} />
-          <Route path="/templates" element={<Templates />} />
-          <Route path="/workout" element={<Workout />} />
-          <Route path="/history" element={<History />} />
-          <Route path="/progress" element={<Progress />} />
-          <Route path="/import" element={<Import />} />
-          <Route path="/social" element={<Social />} />
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </main>
-    </div>
+    <>
+      {!profile?.username && <UsernamePrompt />}
+      <div className="app-layout">
+        <Sidebar />
+        <main className="app-content">
+          <Routes>
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/exercises" element={<Exercises />} />
+            <Route path="/templates" element={<Templates />} />
+            <Route path="/workout" element={<Workout />} />
+            <Route path="/history" element={<History />} />
+            <Route path="/progress" element={<Progress />} />
+            <Route path="/import" element={<Import />} />
+            <Route path="/social" element={<Social />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </main>
+      </div>
+    </>
   );
 }
 

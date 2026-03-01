@@ -190,21 +190,21 @@ function FeedCard({
 function FriendsTab() {
     const {
         friends, pendingRequests, loading,
-        searchUserByEmail, sendFriendRequest,
+        searchUser, sendFriendRequest,
         acceptRequest, declineRequest, removeFriend,
     } = useFriends();
-    const [searchEmail, setSearchEmail] = useState('');
-    const [searchResult, setSearchResult] = useState<{ id: string; display_name: string | null; avatar_url: string | null } | null>(null);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [searchResult, setSearchResult] = useState<{ id: string; display_name: string | null; username: string | null; avatar_url: string | null } | null>(null);
     const [searchLoading, setSearchLoading] = useState(false);
     const [searchError, setSearchError] = useState('');
 
     const handleSearch = async () => {
-        if (!searchEmail.trim()) return;
+        if (!searchQuery.trim()) return;
         setSearchLoading(true);
         setSearchError('');
         setSearchResult(null);
 
-        const result = await searchUserByEmail(searchEmail);
+        const result = await searchUser(searchQuery);
         if (result) {
             const existing = [...friends, ...pendingRequests].find(f => f.id === result.id);
             if (existing) {
@@ -213,7 +213,7 @@ function FriendsTab() {
                 setSearchResult(result);
             }
         } else {
-            setSearchError('No user found with that email');
+            setSearchError('No user found with that email or username');
         }
         setSearchLoading(false);
     };
@@ -223,7 +223,7 @@ function FriendsTab() {
         if (success) {
             toast.success('Friend request sent!');
             setSearchResult(null);
-            setSearchEmail('');
+            setSearchQuery('');
         } else {
             toast.error('Could not send request. You may already be connected.');
         }
@@ -251,16 +251,16 @@ function FriendsTab() {
             <div className="friends-search">
                 <input
                     className="input"
-                    type="email"
-                    placeholder="Search by email..."
-                    value={searchEmail}
-                    onChange={(e) => setSearchEmail(e.target.value)}
+                    type="text"
+                    placeholder="Search by username or email..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                 />
                 <button
                     className="btn btn-primary"
                     onClick={handleSearch}
-                    disabled={searchLoading || !searchEmail.trim()}
+                    disabled={searchLoading || !searchQuery.trim()}
                 >
                     <Search size={16} />
                     {searchLoading ? 'Searching...' : 'Search'}
@@ -274,7 +274,7 @@ function FriendsTab() {
                     </div>
                     <div className="friend-info">
                         <span className="friend-name">{searchResult.display_name || 'Unknown'}</span>
-                        <span className="friend-status">Found user</span>
+                        <span className="friend-status">{searchResult.username ? `@${searchResult.username}` : 'Found user'}</span>
                     </div>
                     <button
                         className="btn btn-primary btn-sm"
@@ -318,7 +318,7 @@ function FriendsTab() {
                             </div>
                             <div className="friend-info">
                                 <span className="friend-name">{req.display_name || 'Unknown'}</span>
-                                <span className="friend-status">Wants to be your friend</span>
+                                <span className="friend-status">{req.username ? `@${req.username} · ` : ''}Wants to be your friend</span>
                             </div>
                             <div className="friend-actions">
                                 <button
@@ -355,7 +355,7 @@ function FriendsTab() {
                             <Users size={32} />
                         </div>
                         <h3>No friends yet</h3>
-                        <p>Search for friends by their email address above to get started!</p>
+                        <p>Search for friends by their username or email above to get started!</p>
                     </div>
                 ) : (
                     friends.map((friend: FriendProfile) => (
@@ -365,7 +365,7 @@ function FriendsTab() {
                             </div>
                             <div className="friend-info">
                                 <span className="friend-name">{friend.display_name || 'Unknown'}</span>
-                                <span className="friend-status">Friends since {new Date(friend.updated_at).toLocaleDateString()}</span>
+                                <span className="friend-status">{friend.username ? `@${friend.username} · ` : ''}Friends since {new Date(friend.updated_at).toLocaleDateString()}</span>
                             </div>
                             <div className="friend-actions">
                                 <button
