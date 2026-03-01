@@ -283,6 +283,7 @@ export default function Import() {
                 instructions: null,
                 secondary_muscles: [],
                 source_url: null,
+                is_global: false,
             });
             if (result) {
                 addedExercises.push({

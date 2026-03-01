@@ -90,6 +90,7 @@ export default function Onboarding({ onComplete }: Props) {
                 secondary_muscles: ex.secondary_muscles,
                 instructions: null,
                 source_url: null,
+                is_global: false,
             });
         }
 
