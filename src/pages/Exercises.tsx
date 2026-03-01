@@ -60,6 +60,7 @@ export default function Exercises() {
             const result = await addExercise({
                 name, muscle_group: muscleGroup, equipment: equipment || 'Bodyweight',
                 instructions, secondary_muscles: secondaryMuscles, source_url: null,
+                is_global: false
             });
             if (result) toast.success('Exercise added!');
         }
@@ -183,12 +184,16 @@ export default function Exercises() {
                             <div className="exercise-card-header">
                                 <h3>{ex.name}</h3>
                                 <div className="exercise-card-actions">
-                                    <button className="btn btn-ghost btn-icon btn-sm" onClick={() => startEdit(ex)}>
-                                        <Edit2 size={14} />
-                                    </button>
-                                    <button className="btn btn-ghost btn-icon btn-sm" onClick={() => handleDelete(ex.id, ex.name)}>
-                                        <Trash2 size={14} />
-                                    </button>
+                                    {!ex.is_global && (
+                                        <>
+                                            <button className="btn btn-ghost btn-icon btn-sm" onClick={() => startEdit(ex)} title="Edit custom exercise">
+                                                <Edit2 size={14} />
+                                            </button>
+                                            <button className="btn btn-ghost btn-icon btn-sm" onClick={() => handleDelete(ex.id, ex.name)} title="Delete custom exercise">
+                                                <Trash2 size={14} />
+                                            </button>
+                                        </>
+                                    )}
                                 </div>
                             </div>
                             <div className="exercise-card-badges">
@@ -197,6 +202,11 @@ export default function Exercises() {
                                 </span>
                                 {ex.equipment && (
                                     <span className="badge badge-primary">{ex.equipment}</span>
+                                )}
+                                {ex.is_global ? (
+                                    <span className="badge" style={{ background: 'var(--bg-glass)', border: '1px solid var(--border-subtle)', color: 'var(--text-secondary)' }}>Global</span>
+                                ) : (
+                                    <span className="badge" style={{ background: 'var(--accent-primary-subtle)', color: 'var(--accent-primary)' }}>Custom</span>
                                 )}
                             </div>
                             {ex.instructions && (

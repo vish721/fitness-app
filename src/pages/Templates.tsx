@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 
 import type { TemplateExercise } from '../lib/supabase';
 import toast from 'react-hot-toast';
+import ExerciseSelectorModal from '../components/ExerciseSelectorModal';
 import './Templates.css';
 
 export default function Templates() {
@@ -13,6 +14,7 @@ export default function Templates() {
     const { exercises } = useExercises();
     const [showForm, setShowForm] = useState(false);
     const [editingId, setEditingId] = useState<string | null>(null);
+    const [isSelectorOpen, setIsSelectorOpen] = useState(false);
 
     const [templateName, setTemplateName] = useState('');
     const [description, setDescription] = useState('');
@@ -154,16 +156,13 @@ export default function Templates() {
 
                             <div className="template-exercises-section">
                                 <label>Exercises</label>
-                                <select
-                                    className="input"
-                                    onChange={e => { if (e.target.value) { addExerciseToTemplate(e.target.value); e.target.value = ''; } }}
-                                    defaultValue=""
+                                <button
+                                    className="btn btn-secondary w-full"
+                                    onClick={() => setIsSelectorOpen(true)}
+                                    style={{ marginBottom: 'var(--space-md)' }}
                                 >
-                                    <option value="">+ Add exercise from library...</option>
-                                    {exercises.map(ex => (
-                                        <option key={ex.id} value={ex.id}>{ex.name} ({ex.muscle_group})</option>
-                                    ))}
-                                </select>
+                                    <Plus size={16} /> Add Exercise
+                                </button>
 
                                 {templateExercises.length > 0 && (
                                     <div className="template-exercise-list">
@@ -206,6 +205,15 @@ export default function Templates() {
                     </div>
                 </div>
             )}
+
+            <ExerciseSelectorModal
+                isOpen={isSelectorOpen}
+                onClose={() => setIsSelectorOpen(false)}
+                onSelect={(id) => {
+                    addExerciseToTemplate(id);
+                    setIsSelectorOpen(false);
+                }}
+            />
 
             {/* Templates List */}
             {loading ? (

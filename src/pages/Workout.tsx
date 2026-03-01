@@ -8,6 +8,7 @@ import { useWorkouts, useWorkoutSets, useExercises, usePersonalRecords, usePrevi
 import type { WorkoutTemplate } from '../lib/supabase';
 import { formatTimerDisplay, cn } from '../lib/utils';
 import toast from 'react-hot-toast';
+import ExerciseSelectorModal from '../components/ExerciseSelectorModal';
 import './Workout.css';
 
 type ActiveExercise = {
@@ -52,6 +53,7 @@ export default function Workout() {
     const [elapsed, setElapsed] = useState(0);
     const [notes, setNotes] = useState('');
     const [workoutRating, setWorkoutRating] = useState<number | null>(null);
+    const [isSelectorOpen, setIsSelectorOpen] = useState(false);
 
     // Rest timer
     const [restTime, setRestTime] = useState(0);
@@ -441,18 +443,23 @@ export default function Workout() {
 
                 {/* Add Exercise */}
                 <div className="add-exercise-section">
-                    <select
-                        className="input"
-                        onChange={e => { if (e.target.value) { addExerciseToWorkout(e.target.value); e.target.value = ''; } }}
-                        defaultValue=""
+                    <button
+                        className="btn btn-secondary w-full"
+                        onClick={() => setIsSelectorOpen(true)}
                     >
-                        <option value="">+ Add exercise...</option>
-                        {exercises.map(ex => (
-                            <option key={ex.id} value={ex.id}>{ex.name} ({ex.muscle_group})</option>
-                        ))}
-                    </select>
+                        <Plus size={16} /> Add Exercise
+                    </button>
                 </div>
             </div>
+
+            <ExerciseSelectorModal
+                isOpen={isSelectorOpen}
+                onClose={() => setIsSelectorOpen(false)}
+                onSelect={(id) => {
+                    addExerciseToWorkout(id);
+                    setIsSelectorOpen(false);
+                }}
+            />
 
             {/* Workout Rating & Notes */}
             <div className="card workout-finish-section" style={{ marginTop: 'var(--space-lg)' }}>

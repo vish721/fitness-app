@@ -15,7 +15,7 @@ export function useExercises() {
         const { data, error } = await supabase
             .from('exercises')
             .select('*')
-            .eq('user_id', user.id)
+            .or(`user_id.eq.${user.id},is_global.eq.true`)
             .order('name');
 
         if (!error && data) setExercises(data as Exercise[]);

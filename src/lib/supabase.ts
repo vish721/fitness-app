@@ -43,6 +43,7 @@ export type Database = {
           equipment: string;
           instructions: string | null;
           source_url: string | null;
+          is_global: boolean;
           created_at: string;
         };
         Insert: {
@@ -53,6 +54,7 @@ export type Database = {
           equipment?: string;
           instructions?: string | null;
           source_url?: string | null;
+          is_global?: boolean;
         };
         Update: {
           name?: string;
@@ -61,6 +63,7 @@ export type Database = {
           equipment?: string;
           instructions?: string | null;
           source_url?: string | null;
+          is_global?: boolean;
         };
       };
       workout_templates: {
