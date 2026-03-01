@@ -117,7 +117,7 @@ export default function Sidebar() {
                                 {user && (
                                     <div className="user-info">
                                         <div className="user-avatar">
-                                            {user.email?.[0]?.toUpperCase() || 'U'}
+                                            {(profile?.display_name || user.email)?.[0]?.toUpperCase() || 'U'}
                                         </div>
                                         <div className="user-details">
                                             <span className="user-name">{profile?.display_name || user.user_metadata?.display_name || user.email?.split('@')[0]}</span>
@@ -193,7 +193,7 @@ export default function Sidebar() {
                 {!collapsed && user && (
                     <div className="user-info">
                         <div className="user-avatar">
-                            {user.email?.[0]?.toUpperCase() || 'U'}
+                            {(profile?.display_name || user.email)?.[0]?.toUpperCase() || 'U'}
                         </div>
                         <div className="user-details">
                             <span className="user-name">{profile?.display_name || user.user_metadata?.display_name || user.email?.split('@')[0]}</span>
