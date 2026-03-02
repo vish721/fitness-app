@@ -60,6 +60,7 @@ export default function Workout() {
     const [restTime, setRestTime] = useState(0);
     const [restActive, setRestActive] = useState(false);
     const [currentRestDuration, setCurrentRestDuration] = useState(90);
+    const [restEndTime, setRestEndTime] = useState<number | null>(null);
     const restInterval = useRef<number | null>(null);
 
     // Previous performance
@@ -69,34 +70,59 @@ export default function Workout() {
     // Workout timer
     useEffect(() => {
         let interval: number | undefined;
-        if (isActive && startedAt) {
-            const updateTimer = () => {
+        const updateTimer = () => {
+            if (isActive && startedAt) {
                 setElapsed(Math.floor((Date.now() - startedAt) / 1000));
-            };
+            } else {
+                setElapsed(0);
+            }
+        };
+
+        if (isActive && startedAt) {
             updateTimer();
             interval = window.setInterval(updateTimer, 1000);
+            document.addEventListener('visibilitychange', updateTimer);
         } else {
             setElapsed(0);
         }
-        return () => clearInterval(interval);
+
+        return () => {
+            clearInterval(interval);
+            document.removeEventListener('visibilitychange', updateTimer);
+        };
     }, [isActive, startedAt]);
 
     // Rest timer
     useEffect(() => {
-        if (restActive && restTime > 0) {
-            restInterval.current = window.setInterval(() => {
-                setRestTime(t => {
-                    if (t <= 1) {
-                        setRestActive(false);
-                        toast('⏰ Rest time is up!', { icon: '💪' });
-                        return 0;
-                    }
-                    return t - 1;
-                });
-            }, 1000);
+        if (restActive && restEndTime) {
+            const updateRestTimer = () => {
+                const now = Date.now();
+                const remaining = Math.ceil((restEndTime - now) / 1000);
+                if (remaining <= 0) {
+                    setRestActive(false);
+                    setRestTime(0);
+                    setRestEndTime(null);
+                    if (restInterval.current) clearInterval(restInterval.current);
+                    toast('⏰ Rest time is up!', { icon: '💪' });
+                } else {
+                    setRestTime(remaining);
+                }
+            };
+
+            updateRestTimer();
+            restInterval.current = window.setInterval(updateRestTimer, 1000);
+            document.addEventListener('visibilitychange', updateRestTimer);
+
+            return () => {
+                if (restInterval.current) clearInterval(restInterval.current);
+                document.removeEventListener('visibilitychange', updateRestTimer);
+            };
+        } else if (!restActive) {
+            setRestTime(0);
+            setRestEndTime(null);
+            if (restInterval.current) clearInterval(restInterval.current);
         }
-        return () => { if (restInterval.current) clearInterval(restInterval.current); };
-    }, [restActive, restTime]);
+    }, [restActive, restEndTime]);
 
     const handleStart = async () => {
         let templateExercises: ActiveExercise[] = [];
@@ -151,7 +177,7 @@ export default function Workout() {
             const exercise = activeExercises[exerciseIndex];
             const restDur = exercise?.restDuration || 90;
             setCurrentRestDuration(restDur);
-            setRestTime(restDur);
+            setRestEndTime(Date.now() + restDur * 1000);
             setRestActive(true);
         }
     };
@@ -430,9 +456,9 @@ export default function Workout() {
                         </div>
                         <span className="rest-timer-label">Rest Time</span>
                         <div className="rest-timer-actions">
-                            <button className="btn btn-ghost btn-sm" onClick={() => setRestTime(t => t + 15)}>+15s</button>
-                            <button className="btn btn-ghost btn-sm" onClick={() => setRestTime(t => Math.max(0, t - 15))}>-15s</button>
-                            <button className="btn btn-secondary btn-sm" onClick={() => { setRestActive(false); setRestTime(0); }}>Skip</button>
+                            <button className="btn btn-ghost btn-sm" onClick={() => setRestEndTime(t => t ? t + 15000 : Date.now() + 15000)}>+15s</button>
+                            <button className="btn btn-ghost btn-sm" onClick={() => setRestEndTime(t => t ? t - 15000 : Date.now() - 15000)}>-15s</button>
+                            <button className="btn btn-secondary btn-sm" onClick={() => { setRestActive(false); setRestEndTime(null); }}>Skip</button>
                         </div>
                     </div>
                 </div>

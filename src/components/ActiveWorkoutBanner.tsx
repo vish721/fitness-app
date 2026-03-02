@@ -14,17 +14,26 @@ export default function ActiveWorkoutBanner() {
 
     useEffect(() => {
         let interval: number | undefined;
-        if (isActive && startedAt) {
-            // Update immediately and then every second
-            const updateTimer = () => {
+        const updateTimer = () => {
+            if (isActive && startedAt) {
                 setElapsed(Math.floor((Date.now() - startedAt) / 1000));
-            };
+            } else {
+                setElapsed(0);
+            }
+        };
+
+        if (isActive && startedAt) {
             updateTimer();
             interval = window.setInterval(updateTimer, 1000);
+            document.addEventListener('visibilitychange', updateTimer);
         } else {
             setElapsed(0);
         }
-        return () => clearInterval(interval);
+
+        return () => {
+            clearInterval(interval);
+            document.removeEventListener('visibilitychange', updateTimer);
+        };
     }, [isActive, startedAt]);
 
     if (!isActive || location.pathname === '/workout') {
