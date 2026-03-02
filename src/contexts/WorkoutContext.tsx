@@ -1,4 +1,5 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect } from 'react';
+import type { ReactNode } from 'react';
 import { useWorkouts, useWorkoutSets, usePersonalRecords } from '../lib/hooks';
 import toast from 'react-hot-toast';
 import { useAuth } from './AuthContext';

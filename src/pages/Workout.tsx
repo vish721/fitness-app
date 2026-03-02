@@ -8,7 +8,7 @@ import { useExercises, usePreviousPerformance } from '../lib/hooks';
 import type { WorkoutTemplate } from '../lib/supabase';
 import { useActiveWorkout } from '../contexts/WorkoutContext';
 import { formatTimerDisplay, cn } from '../lib/utils';
-import type { ActiveExercise, SetEntry } from '../contexts/WorkoutContext';
+import type { ActiveExercise } from '../contexts/WorkoutContext';
 import toast from 'react-hot-toast';
 import ExerciseSelectorModal from '../components/ExerciseSelectorModal';
 import './Workout.css';
