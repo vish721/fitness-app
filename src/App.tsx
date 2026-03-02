@@ -14,6 +14,8 @@ import Import from './pages/Import';
 import Social from './pages/Social';
 import Settings from './pages/Settings';
 import UsernamePrompt from './components/UsernamePrompt';
+import ActiveWorkoutBanner from './components/ActiveWorkoutBanner';
+import { WorkoutProvider } from './contexts/WorkoutContext';
 import './index.css';
 
 // ... AppLayout unchanged ...
@@ -65,6 +67,7 @@ function AppLayout() {
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </main>
+        <ActiveWorkoutBanner />
       </div>
     </>
   );
@@ -75,20 +78,22 @@ function App() {
     <BrowserRouter>
       <ThemeProvider>
         <AuthProvider>
-          <AppLayout />
-          <Toaster
-            position="top-right"
-            toastOptions={{
-              className: 'toast-container',
-              style: {
-                background: 'var(--bg-card)',
-                color: 'var(--text-primary)',
-                border: '1px solid var(--border-subtle)',
-                borderRadius: '10px',
-                fontSize: '14px',
-              },
-            }}
-          />
+          <WorkoutProvider>
+            <AppLayout />
+            <Toaster
+              position="top-right"
+              toastOptions={{
+                className: 'toast-container',
+                style: {
+                  background: 'var(--bg-card)',
+                  color: 'var(--text-primary)',
+                  border: '1px solid var(--border-subtle)',
+                  borderRadius: '10px',
+                  fontSize: '14px',
+                },
+              }}
+            />
+          </WorkoutProvider>
         </AuthProvider>
       </ThemeProvider>
     </BrowserRouter>

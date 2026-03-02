@@ -4,29 +4,14 @@ import {
     Play, Square, Plus, Trash2, Timer,
     CheckCircle, ChevronDown, ChevronUp, Clock
 } from 'lucide-react';
-import { useWorkouts, useWorkoutSets, useExercises, usePersonalRecords, usePreviousPerformance } from '../lib/hooks';
+import { useExercises, usePreviousPerformance } from '../lib/hooks';
 import type { WorkoutTemplate } from '../lib/supabase';
+import { useActiveWorkout } from '../contexts/WorkoutContext';
 import { formatTimerDisplay, cn } from '../lib/utils';
+import type { ActiveExercise, SetEntry } from '../contexts/WorkoutContext';
 import toast from 'react-hot-toast';
 import ExerciseSelectorModal from '../components/ExerciseSelectorModal';
 import './Workout.css';
-
-type ActiveExercise = {
-    exercise_id: string;
-    exercise_name: string;
-    sets: SetEntry[];
-    collapsed: boolean;
-    restDuration: number; // rest timer duration in seconds, per exercise
-};
-
-type SetEntry = {
-    id?: string;
-    reps: number;
-    weight: number;
-    rpe: number | null;
-    is_warmup: boolean;
-    saved: boolean;
-};
 
 const REST_PRESETS = [30, 60, 90, 120, 180, 300];
 const WORKOUT_RATINGS = [
@@ -42,17 +27,33 @@ export default function Workout() {
     const navigate = useNavigate();
     const template = (location.state as any)?.template as WorkoutTemplate | undefined;
 
-    const { startWorkout, finishWorkout } = useWorkouts();
     const { exercises } = useExercises();
-    const { checkAndUpdatePR } = usePersonalRecords();
 
-    const [workoutId, setWorkoutId] = useState<string | null>(null);
-    const [workoutName, setWorkoutName] = useState(template?.name || '');
-    const [activeExercises, setActiveExercises] = useState<ActiveExercise[]>([]);
-    const [isActive, setIsActive] = useState(false);
+    const {
+        workoutId,
+        workoutName,
+        setWorkoutName,
+        activeExercises,
+        isActive,
+        startedAt,
+        notes,
+        setNotes,
+        workoutRating,
+        setWorkoutRating,
+        startNewWorkout,
+        finishCurrentWorkout,
+        cancelWorkout,
+        addExerciseToWorkout,
+        removeExercise,
+        toggleCollapse,
+        updateRestDuration,
+        addSetToExercise,
+        removeSet,
+        updateSetField,
+        saveSetToDb
+    } = useActiveWorkout();
+
     const [elapsed, setElapsed] = useState(0);
-    const [notes, setNotes] = useState('');
-    const [workoutRating, setWorkoutRating] = useState<number | null>(null);
     const [isSelectorOpen, setIsSelectorOpen] = useState(false);
 
     // Rest timer
@@ -61,8 +62,6 @@ export default function Workout() {
     const [currentRestDuration, setCurrentRestDuration] = useState(90);
     const restInterval = useRef<number | null>(null);
 
-    const { addSet } = useWorkoutSets(workoutId);
-
     // Previous performance
     const exerciseIds = useMemo(() => activeExercises.map(e => e.exercise_id), [activeExercises]);
     const previousPerformance = usePreviousPerformance(exerciseIds);
@@ -70,11 +69,17 @@ export default function Workout() {
     // Workout timer
     useEffect(() => {
         let interval: number | undefined;
-        if (isActive) {
-            interval = window.setInterval(() => setElapsed(e => e + 1), 1000);
+        if (isActive && startedAt) {
+            const updateTimer = () => {
+                setElapsed(Math.floor((Date.now() - startedAt) / 1000));
+            };
+            updateTimer();
+            interval = window.setInterval(updateTimer, 1000);
+        } else {
+            setElapsed(0);
         }
         return () => clearInterval(interval);
-    }, [isActive]);
+    }, [isActive, startedAt]);
 
     // Rest timer
     useEffect(() => {
@@ -94,159 +99,64 @@ export default function Workout() {
     }, [restActive, restTime]);
 
     const handleStart = async () => {
-        if (!workoutName.trim()) {
-            toast.error('Enter a workout name');
-            return;
+        let templateExercises: ActiveExercise[] = [];
+        if (template?.exercises) {
+            templateExercises = template.exercises.map(te => ({
+                exercise_id: te.exercise_id,
+                exercise_name: te.exercise_name,
+                sets: Array.from({ length: te.target_sets }, () => ({
+                    reps: parseInt(te.target_reps) || 10,
+                    weight: 0,
+                    rpe: null,
+                    is_warmup: false,
+                    saved: false,
+                })),
+                collapsed: false,
+                restDuration: 90,
+            }));
         }
-        const workout = await startWorkout(workoutName, template?.id);
-        if (workout) {
-            setWorkoutId(workout.id);
-            setIsActive(true);
 
-            // Pre-populate from template
-            if (template?.exercises) {
-                const templateExercises: ActiveExercise[] = template.exercises.map(te => ({
-                    exercise_id: te.exercise_id,
-                    exercise_name: te.exercise_name,
-                    sets: Array.from({ length: te.target_sets }, () => ({
-                        reps: parseInt(te.target_reps) || 10,
-                        weight: 0,
-                        rpe: null,
-                        is_warmup: false,
-                        saved: false,
-                    })),
-                    collapsed: false,
-                    restDuration: 90,
-                }));
-                setActiveExercises(templateExercises);
-            }
-            toast.success('Workout started!');
-        }
+        await startNewWorkout(
+            workoutName || template?.name || 'New Workout',
+            template?.id,
+            templateExercises
+        );
     };
 
     const handleFinish = async () => {
-        if (!workoutId) return;
-
-        // Save any unsaved sets first
-        for (const ex of activeExercises) {
-            for (let i = 0; i < ex.sets.length; i++) {
-                const s = ex.sets[i];
-                if (!s.saved && s.weight > 0 && s.reps > 0) {
-                    await saveSet(ex.exercise_id, i, s);
-                }
-            }
+        const success = await finishCurrentWorkout();
+        if (success) {
+            navigate('/history');
         }
-
-        // Include rating in notes
-        const ratingNote = workoutRating !== null ? `[Rating: ${WORKOUT_RATINGS[workoutRating].emoji} ${WORKOUT_RATINGS[workoutRating].label}]` : '';
-        const fullNotes = [ratingNote, notes].filter(Boolean).join('\n');
-
-        await finishWorkout(workoutId, fullNotes);
-        setIsActive(false);
-        toast.success('Workout complete! 🎉');
-        navigate('/history');
     };
 
-    const addExerciseToWorkout = (exerciseId: string) => {
+    const handleCancel = async () => {
+        await cancelWorkout();
+        navigate('/');
+    };
+
+    const handleAddExercise = (exerciseId: string) => {
         const ex = exercises.find(e => e.id === exerciseId);
-        if (!ex) return;
-        setActiveExercises(prev => [...prev, {
-            exercise_id: ex.id,
-            exercise_name: ex.name,
-            sets: [{ reps: 10, weight: 0, rpe: null, is_warmup: false, saved: false }],
-            collapsed: false,
-            restDuration: 90,
-        }]);
+        if (ex) {
+            addExerciseToWorkout(ex.id, ex.name);
+        }
     };
 
-    const removeExercise = (index: number) => {
-        setActiveExercises(prev => prev.filter((_, i) => i !== index));
-    };
+    const handleSaveSet = async (exerciseIndex: number, setIndex: number) => {
+        const success = await saveSetToDb(exerciseIndex, setIndex);
+        if (success) {
+            toast.success(`Set ${setIndex + 1} logged!`);
 
-    const addSetToExercise = (exerciseIndex: number) => {
-        setActiveExercises(prev => prev.map((ex, i) =>
-            i === exerciseIndex ? {
-                ...ex,
-                sets: [...ex.sets, { reps: 10, weight: 0, rpe: null, is_warmup: false, saved: false }],
-            } : ex
-        ));
-    };
-
-    const removeSet = (exerciseIndex: number, setIndex: number) => {
-        setActiveExercises(prev => prev.map((ex, i) =>
-            i === exerciseIndex ? {
-                ...ex,
-                sets: ex.sets.filter((_, si) => si !== setIndex),
-            } : ex
-        ));
-    };
-
-    const updateSetField = (exerciseIndex: number, setIndex: number, field: keyof SetEntry, value: any) => {
-        setActiveExercises(prev => prev.map((ex, i) =>
-            i === exerciseIndex ? {
-                ...ex,
-                sets: ex.sets.map((s, si) => si === setIndex ? { ...s, [field]: value } : s),
-            } : ex
-        ));
-    };
-
-    const updateRestDuration = (exerciseIndex: number, duration: number) => {
-        setActiveExercises(prev => prev.map((ex, i) =>
-            i === exerciseIndex ? { ...ex, restDuration: duration } : ex
-        ));
-    };
-
-    const saveSet = async (exerciseId: string, setIndex: number, set: SetEntry) => {
-        if (!workoutId) return;
-        const result = await addSet({
-            workout_id: workoutId,
-            exercise_id: exerciseId,
-            set_number: setIndex + 1,
-            reps: set.reps,
-            weight: set.weight,
-            rpe: set.rpe,
-            is_warmup: set.is_warmup,
-        });
-
-        if (result) {
-            // Check for PR
-            const newPRs = await checkAndUpdatePR(exerciseId, set.weight, set.reps, workoutId);
-            if (newPRs.length > 0) {
-                toast('🏆 New Personal Record!', { duration: 3000, icon: '🎉' });
-            }
-
-            // Start rest timer with the exercise's specific rest duration
-            const exercise = activeExercises.find(e => e.exercise_id === exerciseId);
+            // Start rest timer
+            const exercise = activeExercises[exerciseIndex];
             const restDur = exercise?.restDuration || 90;
             setCurrentRestDuration(restDur);
             setRestTime(restDur);
             setRestActive(true);
         }
-
-        return result;
     };
 
-    const handleSaveSet = async (exerciseIndex: number, setIndex: number) => {
-        const ex = activeExercises[exerciseIndex];
-        const set = ex.sets[setIndex];
 
-        if (set.weight <= 0 || set.reps <= 0) {
-            toast.error('Enter weight and reps');
-            return;
-        }
-
-        const result = await saveSet(ex.exercise_id, setIndex, set);
-        if (result) {
-            updateSetField(exerciseIndex, setIndex, 'saved', true);
-            toast.success(`Set ${setIndex + 1} logged!`);
-        }
-    };
-
-    const toggleCollapse = (index: number) => {
-        setActiveExercises(prev => prev.map((ex, i) =>
-            i === index ? { ...ex, collapsed: !ex.collapsed } : ex
-        ));
-    };
 
     // Pre-workout state
     if (!isActive && !workoutId) {
@@ -263,7 +173,7 @@ export default function Workout() {
                         <input
                             className="input"
                             placeholder="e.g. Push Day, Leg Day..."
-                            value={workoutName}
+                            value={workoutName || (template?.name || '')}
                             onChange={e => setWorkoutName(e.target.value)}
                         />
                     </div>
@@ -312,6 +222,9 @@ export default function Workout() {
                     </div>
                 </div>
                 <div className="flex gap-md">
+                    <button className="btn btn-ghost" onClick={handleCancel}>
+                        Cancel
+                    </button>
                     <button className="btn btn-danger" onClick={handleFinish}>
                         <Square size={16} />
                         Finish
@@ -456,7 +369,7 @@ export default function Workout() {
                 isOpen={isSelectorOpen}
                 onClose={() => setIsSelectorOpen(false)}
                 onSelect={(id) => {
-                    addExerciseToWorkout(id);
+                    handleAddExercise(id);
                     setIsSelectorOpen(false);
                 }}
             />
