@@ -4,7 +4,7 @@ import {
     Play, Square, Plus, Trash2, Timer,
     CheckCircle, ChevronDown, ChevronUp, Clock
 } from 'lucide-react';
-import { useExercises, usePreviousPerformance } from '../lib/hooks';
+import { usePreviousPerformance } from '../lib/hooks';
 import type { WorkoutTemplate } from '../lib/supabase';
 import { useActiveWorkout } from '../contexts/WorkoutContext';
 import { formatTimerDisplay, cn } from '../lib/utils';
@@ -27,7 +27,6 @@ export default function Workout() {
     const navigate = useNavigate();
     const template = (location.state as any)?.template as WorkoutTemplate | undefined;
 
-    const { exercises } = useExercises();
 
     const {
         workoutId,
@@ -161,11 +160,8 @@ export default function Workout() {
         navigate('/');
     };
 
-    const handleAddExercise = (exerciseId: string) => {
-        const ex = exercises.find(e => e.id === exerciseId);
-        if (ex) {
-            addExerciseToWorkout(ex.id, ex.name);
-        }
+    const handleAddExercise = (exerciseId: string, exerciseName: string) => {
+        addExerciseToWorkout(exerciseId, exerciseName);
     };
 
     const handleSaveSet = async (exerciseIndex: number, setIndex: number) => {
@@ -394,8 +390,8 @@ export default function Workout() {
             <ExerciseSelectorModal
                 isOpen={isSelectorOpen}
                 onClose={() => setIsSelectorOpen(false)}
-                onSelect={(id) => {
-                    handleAddExercise(id);
+                onSelect={(id, name) => {
+                    handleAddExercise(id, name);
                     setIsSelectorOpen(false);
                 }}
             />

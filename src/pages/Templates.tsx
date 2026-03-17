@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Plus, ClipboardList, Trash2, Edit2, Copy, Play } from 'lucide-react';
-import { useTemplates, useExercises } from '../lib/hooks';
+import { useTemplates } from '../lib/hooks';
 import { useNavigate } from 'react-router-dom';
 
 import type { TemplateExercise } from '../lib/supabase';
@@ -11,7 +11,6 @@ import './Templates.css';
 export default function Templates() {
     const navigate = useNavigate();
     const { templates, loading, addTemplate, updateTemplate, deleteTemplate } = useTemplates();
-    const { exercises } = useExercises();
     const [showForm, setShowForm] = useState(false);
     const [editingId, setEditingId] = useState<string | null>(null);
     const [isSelectorOpen, setIsSelectorOpen] = useState(false);
@@ -30,17 +29,15 @@ export default function Templates() {
         setShowForm(false);
     };
 
-    const addExerciseToTemplate = (exerciseId: string) => {
-        const ex = exercises.find(e => e.id === exerciseId);
-        if (!ex) return;
+    const addExerciseToTemplate = (exerciseId: string, exerciseName: string) => {
         const exists = templateExercises.some(te => te.exercise_id === exerciseId);
         if (exists) {
             toast.error('Exercise already in template');
             return;
         }
         setTemplateExercises(prev => [...prev, {
-            exercise_id: ex.id,
-            exercise_name: ex.name,
+            exercise_id: exerciseId,
+            exercise_name: exerciseName,
             target_sets: 3,
             target_reps: '8-12',
             order: prev.length,
@@ -209,8 +206,8 @@ export default function Templates() {
             <ExerciseSelectorModal
                 isOpen={isSelectorOpen}
                 onClose={() => setIsSelectorOpen(false)}
-                onSelect={(id) => {
-                    addExerciseToTemplate(id);
+                onSelect={(id, name) => {
+                    addExerciseToTemplate(id, name);
                     setIsSelectorOpen(false);
                 }}
             />

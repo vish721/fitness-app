@@ -8,7 +8,7 @@ import './ExerciseSelectorModal.css';
 interface Props {
     isOpen: boolean;
     onClose: () => void;
-    onSelect: (exerciseId: string) => void;
+    onSelect: (exerciseId: string, exerciseName: string) => void;
 }
 
 const MUSCLE_GROUPS = ['Chest', 'Back', 'Legs', 'Shoulders', 'Arms', 'Core', 'Full Body'];
@@ -45,7 +45,7 @@ export default function ExerciseSelectorModal({ isOpen, onClose, onSelect }: Pro
             toast.success(`Created custom exercise: ${name}`);
             setCreatingCustom(false);
             setSearch('');
-            onSelect(newExercise.id);
+            onSelect(newExercise.id, newExercise.name);
         } else {
             toast.error('Failed to create custom exercise');
         }
@@ -189,7 +189,7 @@ export default function ExerciseSelectorModal({ isOpen, onClose, onSelect }: Pro
                                                         <button
                                                             key={ex.id}
                                                             className="exercise-item-btn"
-                                                            onClick={() => onSelect(ex.id)}
+                                                            onClick={() => onSelect(ex.id, ex.name)}
                                                         >
                                                             <div className="exercise-item-name">{ex.name}</div>
                                                             {ex.equipment && <div className="exercise-item-meta">{ex.equipment}</div>}
