@@ -9,7 +9,6 @@ import {
     TrendingUp,
     Link,
     LogOut,
-    Flame,
     ChevronLeft,
     ChevronRight,
     Menu,
@@ -18,6 +17,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useState, useEffect } from 'react';
+import logoImg from '../../assets/logo.png';
 import './Sidebar.css';
 
 const navItems = [
@@ -67,9 +67,7 @@ export default function Sidebar() {
                 {/* Mobile Top Header */}
                 <header className="mobile-header">
                     <div className="mobile-header-logo">
-                        <div className="logo-icon logo-icon-sm">
-                            <Flame size={18} />
-                        </div>
+                        <img src={logoImg} alt="Chud2Chad" className="logo-img logo-img-sm" />
                         <span className="logo-text logo-text-sm">Chud2Chad</span>
                     </div>
                     <div className="flex items-center gap-sm">
@@ -89,9 +87,7 @@ export default function Sidebar() {
                         <div className="mobile-drawer" onClick={e => e.stopPropagation()}>
                             <div className="mobile-drawer-header">
                                 <div className="sidebar-logo">
-                                    <div className="logo-icon">
-                                        <Flame size={24} />
-                                    </div>
+                                    <img src={logoImg} alt="Chud2Chad" className="logo-img" />
                                     <span className="logo-text">Chud2Chad</span>
                                 </div>
                                 <button className="btn btn-ghost btn-icon" onClick={() => setMobileMenuOpen(false)}>
@@ -160,9 +156,7 @@ export default function Sidebar() {
         <aside className={`sidebar ${collapsed ? 'collapsed' : ''}`}>
             <div className="sidebar-header">
                 <div className="sidebar-logo">
-                    <div className="logo-icon">
-                        <Flame size={24} />
-                    </div>
+                    <img src={logoImg} alt="Chud2Chad" className="logo-img" />
                     {!collapsed && <span className="logo-text">Chud2Chad</span>}
                 </div>
                 <button

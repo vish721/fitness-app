@@ -29,15 +29,17 @@
 }
 
 .auth-logo {
-    width: 64px;
-    height: 64px;
-    border-radius: var(--radius-lg);
-    background: var(--accent-primary);
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    color: white;
     margin-bottom: var(--space-lg);
+}
+
+.auth-logo-img {
+    width: 64px;
+    height: 64px;
+    border-radius: var(--radius-lg);
+    object-fit: cover;
 }
 
 .auth-header h1 {

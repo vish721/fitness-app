@@ -61,6 +61,22 @@
     white-space: nowrap;
 }
 
+.logo-img {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    border-radius: var(--radius-md);
+    object-fit: cover;
+}
+
+.logo-img-sm {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    border-radius: var(--radius-sm);
+    object-fit: cover;
+}
+
 .logo-text-sm {
     font-size: var(--font-lg);
 }

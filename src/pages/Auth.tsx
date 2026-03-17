@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, type FormEvent } from 'react';
-import { Flame, Mail, Lock, User, ArrowRight, AtSign, Check, X } from 'lucide-react';
+import { Mail, Lock, User, ArrowRight, AtSign, Check, X } from 'lucide-react';
+import logoImg from '../assets/logo.png';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
 import toast from 'react-hot-toast';
@@ -91,7 +92,7 @@ export default function Auth() {
             <div className="auth-container animate-slide-up">
                 <div className="auth-header">
                     <div className="auth-logo">
-                        <Flame size={32} />
+                        <img src={logoImg} alt="Chud2Chad" className="auth-logo-img" />
                     </div>
                     <h1>Chud2Chad</h1>
                     <p>Your personal workout companion</p>
